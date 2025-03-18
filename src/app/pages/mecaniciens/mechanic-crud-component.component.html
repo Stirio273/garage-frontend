@@ -1,0 +1,117 @@
+<p-toast></p-toast>
+
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Ajouter" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        <p-button severity="secondary" label="Supprimer" icon="pi pi-trash" outlined
+            (onClick)="onDeleteSelectedMechanics()" [disabled]="!selectedMechanics || !selectedMechanics.length" />
+    </ng-template>
+
+    <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template>
+</p-toolbar>
+
+<p-table #dt [value]="mechanics()" [rows]="10" [columns]="cols" [paginator]="true"
+    [globalFilterFields]="['name', 'firstName', 'email', 'phoneNumber', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedMechanics" [rowHover]="true" dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mechanics" [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 20, 30]">
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Gérer les mécaniciens</h5>
+            <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Recherche..." />
+            </p-iconfield>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th style="min-width: 16rem">Code</th>
+            <th pSortableColumn="name" style="min-width:16rem">
+                Nom
+                <p-sortIcon field="name" />
+            </th>
+            <th pSortableColumn="firstName" style="min-width:16rem">
+                Prénom
+                <p-sortIcon field="firstName" />
+            </th>
+            <th pSortableColumn="phoneNumber" style="min-width:8rem">
+                Téléphone
+                <p-sortIcon field="phoneNumber" />
+            </th>
+            <th pSortableColumn="status" style="min-width: 12rem">
+                Status
+                <p-sortIcon field="status" />
+            </th>
+            <th style="min-width: 12rem"></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mechanic>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="mechanic" />
+            </td>
+            <td style="min-width: 12rem">{{ mechanic.code }}</td>
+            <td style="min-width: 16rem">{{ mechanic.name }}</td>
+            <td style="min-width: 16rem">{{ mechanic.firstName }}</td>
+            <td style="min-width: 16rem">{{ mechanic.email }}</td>
+            <td>{{ mechanic.phoneNumber }}</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                    (click)="onEditMechanic(mechanic)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                    (click)="onDeleteMechanic(mechanic)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="mechanicDialog" [style]="{ width: '450px' }" header="Details du mécanicien" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <!-- <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image"
+                class="block m-auto pb-4" *ngIf="product.image" /> -->
+            <div>
+                <label for="name" class="block font-bold mb-3">Nom</label>
+                <input type="text" pInputText id="name" [(ngModel)]="mechanic.name" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !mechanic.name">Le nom est obligatoire.</small>
+            </div>
+            <div>
+                <label for="firstName" class="block font-bold mb-3">Prénom</label>
+                <input type="text" pInputText id="firstName" [(ngModel)]="mechanic.firstName" required autofocus
+                    fluid />
+                <small class="text-red-500" *ngIf="submitted && !mechanic.name">Le prénom est obligatoire.</small>
+            </div>
+            <div>
+                <label for="email" class="block font-bold mb-3">Email</label>
+                <input type="text" pInputText id="email" [(ngModel)]="mechanic.email" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !mechanic.email">L'email est obligatoire.</small>
+            </div>
+            <div>
+                <label for="phoneNumber" class="block font-bold mb-3">Numéro de téléphone</label>
+                <input type="text" pInputText id="phoneNumber" [(ngModel)]="mechanic.phoneNumber" required autofocus
+                    fluid />
+                <small class="text-red-500" *ngIf="submitted && !mechanic.name">Le numéro de téléphone est
+                    obligatoire.</small>
+            </div>
+            <div>
+                <label for="password1" class="block font-bold mb-2">Mot
+                    de passe</label>
+                <p-password id="password1" [(ngModel)]="mechanic.password" [toggleMask]="true" styleClass="mb-4"
+                    [fluid]="true" [feedback]="false"></p-password>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="onSaveMechanic()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
