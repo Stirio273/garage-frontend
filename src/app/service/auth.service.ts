@@ -21,10 +21,10 @@ export class AuthService {
     ) {}
 
     signIn(email: string, password: string): Observable<{ user: User }> {
-        return this.http.post<{ user: User }>(`${environment.apiUrl}/login`, { email, password }).pipe(
+        return this.http.post<{ user: User; token: string }>(`${environment.apiUrl}/login`, { email, password }).pipe(
             tap((response) => {
-                this._currentUser.set(response.user);
-                this.setSession(response.user);
+                this._currentUser.set({ ...response.user, token: response.token });
+                this.setSession({ ...response.user, token: response.token });
             })
         );
     }

@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
@@ -17,11 +17,16 @@ import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
+import { DataViewModule } from 'primeng/dataview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { Car } from '../../model/car';
 import { CarsService } from '../../service/cars.service';
+import { ToolbarComponent } from '../../layout/component/app.toolbar';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 interface Column {
     field: string;
@@ -35,12 +40,17 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud',
+    selector: 'app-car-list-component',
     standalone: true,
     imports: [
         CommonModule,
         TableModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
         FormsModule,
+        ReactiveFormsModule,
         ButtonModule,
         RippleModule,
         ToastModule,
@@ -56,112 +66,166 @@ interface ExportColumn {
         InputIconModule,
         IconFieldModule,
         ConfirmDialogModule,
-        MatCardModule,
-        MatButtonModule
+        DataViewModule,
+        ToolbarComponent
     ],
     template: `
-        <p-toolbar styleClass="mb-6">
-            <ng-template #start>
-                <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
-                <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
-            </ng-template>
+        <app-toolbar [disableDelete]="!selectedCars || !selectedCars.length" (newClicked)="openNew()" (deleteClicked)="deleteSelectedCars()" (exportClicked)="exportCSV()"></app-toolbar>
 
-            <ng-template #end>
-                <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
-            </ng-template>
-        </p-toolbar>
-
-        <div class="car-list">
-            <mat-card class="car-card">
-                <mat-card-header>
-                    <div mat-card-avatar class="car-avatar"></div>
-                    <mat-card-title>Tesla Model S</mat-card-title>
-                    <mat-card-subtitle>2023</mat-card-subtitle>
-                </mat-card-header>
-                <img mat-card-image src="assets/pexels-mikebirdy-170811.jpg" alt="Tesla Model S" />
-                <mat-card-content>
-                    <p>Une voiture électrique de luxe avec une autonomie impressionnante et des performances de haut niveau.</p>
-                </mat-card-content>
-                <mat-card-actions>
-                    <button mat-button>Details</button>
-                    <button mat-button>Contact</button>
-                </mat-card-actions>
-            </mat-card>
+        <div class="flex flex-col">
+            <div class="card">
+                <div class="font-semibold text-xl"><h1>Mes véhicules</h1></div>
+                <p-dataview [value]="cars()" layout="grid">
+                    <ng-template #grid let-items>
+                        <div class="grid grid-cols-12 gap-4 mt-4">
+                            <div *ngFor="let item of items; let i = index" class="col-span-12 sm:col-span-6 lg:col-span-4 p-2">
+                                <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
+                                    <div class="bg-surface-50 flex justify-center rounded p-6">
+                                        <div class="relative mx-auto">
+                                            <img class="rounded w-full" src="assets/pexels-mikebirdy-170811.jpg" alt="Tesla Model S" style="max-width: 300px" />
+                                        </div>
+                                    </div>
+                                    <div class="pt-12">
+                                        <div class="flex flex-row justify-between items-start gap-2">
+                                            <div>
+                                                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">SUV</span>
+                                                <div class="text-lg font-medium mt-1">Tesla Model S</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex mt-6">
+                                            <p>Une voiture électrique de luxe avec une autonomie impressionnante et des performances de haut niveau.</p>
+                                        </div>
+                                        <!-- <div class="flex flex-col gap-6 mt-6">
+                                            <span class="text-2xl font-semibold">$ {{ item.price }}</span>
+                                            <div class="flex gap-2">
+                                                <p-button icon="pi pi-shopping-cart" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto whitespace-nowrap" styleClass="w-full"></p-button>
+                                                <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true"></p-button>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataview>
+            </div>
         </div>
 
-        <!-- <p-dialog [(visible)]="carDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true">
+        <p-dialog [(visible)]="carDialog" [style]="{ width: '675px' }" header="Details du véhicule" [modal]="true" [formGroup]="carForm">
             <ng-template #content>
                 <div class="flex flex-col gap-6">
-                    <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + car.image" [alt]="car.image" class="block m-auto pb-4" *ngIf="car.image" />
-                    <div>
-                        <label for="name" class="block font-bold mb-3">Name</label>
-                        <input type="text" pInputText id="name" [(ngModel)]="car.name" required autofocus fluid />
-                        <small class="text-red-500" *ngIf="submitted && !car.name">Name is required.</small>
+                    <!-- <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image"
+                class="block m-auto pb-4" *ngIf="product.image" /> -->
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="marque" class="block font-bold mb-3">Marque</label>
+                            <input type="text" pInputText id="marque" formControlName="marque" required autofocus fluid />
+                            <!-- <small class="text-red-500" *ngIf="submitted && !car.marque">La marque est obligatoire.</small> -->
+                        </div>
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="modele" class="block font-bold mb-3">Modèle</label>
+                            <input type="text" pInputText id="modele" formControlName="modele" required autofocus fluid />
+                            <!-- <small class="text-red-500" *ngIf="submitted && !car.modele">Le modèle est obligatoire.</small> -->
+                        </div>
                     </div>
-                    <div>
-                        <label for="description" class="block font-bold mb-3">Description</label>
-                        <textarea id="description" pTextarea [(ngModel)]="car.description" required rows="3" cols="20" fluid></textarea>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="annee" class="block font-bold mb-3">Année</label>
+                            <input type="number" pInputText id="annee" formControlName="annee" required autofocus fluid />
+                            <!-- <small class="text-red-500" *ngIf="submitted && !car.annee">L'année est obligatoire.</small> -->
+                        </div>
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="plaqueImmatriculation" class="block font-bold mb-3">Plaque d'immatriculation</label>
+                            <input type="text" pInputText id="plaqueImmatriculation" formControlName="plaqueImmatriculation" required autofocus fluid />
+                            <!-- <small class="text-red-500" *ngIf="submitted && !car.plaqueImmatriculation">La plaque d'immatriculation est obligatoire.</small> -->
+                        </div>
                     </div>
-
-                    <div>
-                        <label for="inventoryStatus" class="block font-bold mb-3">Inventory Status</label>
-                        <p-select [(ngModel)]="car.inventoryStatus" inputId="inventoryStatus" [options]="statuses" optionLabel="label" optionValue="label" placeholder="Select a Status" fluid />
-                    </div>
-
-                    <div>
-                        <span class="block font-bold mb-4">Category</span>
-                        <div class="grid grid-cols-12 gap-4">
-                            <div class="flex items-center gap-2 col-span-6">
-                                <p-radiobutton id="category1" name="category" value="Accessories" [(ngModel)]="car.category" />
-                                <label for="category1">Accessories</label>
-                            </div>
-                            <div class="flex items-center gap-2 col-span-6">
-                                <p-radiobutton id="category2" name="category" value="Clothing" [(ngModel)]="car.category" />
-                                <label for="category2">Clothing</label>
-                            </div>
-                            <div class="flex items-center gap-2 col-span-6">
-                                <p-radiobutton id="category3" name="category" value="Electronics" [(ngModel)]="car.category" />
-                                <label for="category3">Electronics</label>
-                            </div>
-                            <div class="flex items-center gap-2 col-span-6">
-                                <p-radiobutton id="category4" name="category" value="Fitness" [(ngModel)]="car.category" />
-                                <label for="category4">Fitness</label>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="kilometrage" class="block font-bold mb-3">Kilométrage</label>
+                            <input type="number" pInputText id="kilometrage" formControlName="kilometrage" required autofocus fluid />
+                            <!-- <small class="text-red-500" *ngIf="submitted && !car.kilometrage">Le Kilométrage est obligatoire.</small> -->
+                        </div>
+                        <div class="flex-col flex-wrap gap-2 w-full">
+                            <span class="block font-bold mb-8">Type de carburant</span>
+                            <div class="grid grid-cols-12 gap-4">
+                                <div class="flex items-center gap-2 col-span-6">
+                                    <p-radiobutton id="essence" name="typeCarburant" value="Essence" formControlName="typeCarburant" />
+                                    <label for="essence">Essence</label>
+                                </div>
+                                <div class="flex items-center gap-2 col-span-6">
+                                    <p-radiobutton id="diesel" name="typeCarburant" value="Diesel" formControlName="typeCarburant" />
+                                    <label for="diesel">Diesel</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-12 gap-4">
-                        <div class="col-span-6">
-                            <label for="price" class="block font-bold mb-3">Price</label>
-                            <p-inputnumber id="price" [(ngModel)]="car.price" mode="currency" currency="USD" locale="en-US" fluid />
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="dateDernierEntretien" class="block font-bold mb-3">Date du dernier entretien</label>
+                            <input type="datetime-local" name="dateDerniereEntretien" id="dateDerniereEntretien" formControlName="dateDerniereEntretien" />
                         </div>
-                        <div class="col-span-6">
-                            <label for="quantity" class="block font-bold mb-3">Quantity</label>
-                            <p-inputnumber id="quantity" [(ngModel)]="car.quantity" fluid />
+                        <div class="flex flex-wrap gap-2 w-full">
+                            <label for="dateExpirationAssurance" class="block font-bold mb-3">Date d'expiration de l'assurance</label>
+                            <input type="datetime-local" name="dateExpirationAssurance" id="dateExpirationAssurance" formControlName="dateExpirationAssurance" />
                         </div>
                     </div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Photo</mat-label>
+                        <div class="fileUploadContainer" [ngStyle]="{ 'margin-top': carForm.get('image')!.value ? '5px' : '20px' }">
+                            <ng-container *ngIf="carForm.get('image')">
+                                <img [src]="carForm.get('image')!.value" />
+                                <button class="deleteButton" mat-icon-button (click)="fileInput.value = ''; carForm.get('image')?.setValue(null)">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </ng-container>
+                            <!-- no image -->
+                            <div *ngIf="!carForm.get('image')!.value" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px">
+                                <mat-icon style="opacity: 60%;">file_upload</mat-icon>
+                                <button mat-raised-button color="primary" style="width:100%; opacity: 80%;">Browser</button>
+                                <small style="margin: 20px">Drag and drop here</small>
+                            </div>
+                            <!-- put on top of the fileUploadContainer with opacity 0 -->
+                            <input #fileInput class="fileInput" type="file" multiple="multiple" accept="image/*" (change)="setFileData($event)" />
+                        </div>
+                        <input matInput formControlName="image" readonly [hidden]="true" />
+                    </mat-form-field>
                 </div>
             </ng-template>
 
             <ng-template #footer>
-                <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
-                <p-button label="Save" icon="pi pi-check" (click)="saveProduct()" />
+                <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+                <p-button label="Enregistrer" type="submit" icon="pi pi-check" (click)="onSaveCar()" />
             </ng-template>
-        </p-dialog> -->
+        </p-dialog>
 
         <p-confirmdialog [style]="{ width: '450px' }" />
     `,
     styleUrl: './car-list.component.scss',
-    providers: [MessageService, CarsService, ConfirmationService]
+    providers: [MessageService, CarsService, ConfirmationService, provideNativeDateAdapter()]
 })
 export class CarListComponent implements OnInit {
     carDialog: boolean = false;
 
-    cars = signal<Car[]>([]);
+    cars = signal<Car[]>([
+        {
+            id: '',
+            marque: '',
+            modele: '',
+            annee: 0,
+            plaqueImmatriculation: '',
+            kilometrage: 0,
+            typeCarburant: '',
+            dateDernierEntretien: new Date(),
+            dateExpirationAssurance: new Date(),
+            image: ''
+        }
+    ]);
 
-    car!: Car;
+    selectedFileCarForm!: File;
+    carForm!: FormGroup;
 
-    selectedProducts!: Car[] | null;
+    selectedCars!: Car[] | null;
 
     submitted: boolean = false;
 
@@ -176,7 +240,8 @@ export class CarListComponent implements OnInit {
     constructor(
         private carsService: CarsService,
         private messageService: MessageService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private formBuilder: FormBuilder
     ) {}
 
     exportCSV() {
@@ -185,6 +250,17 @@ export class CarListComponent implements OnInit {
 
     ngOnInit() {
         this.loadDemoData();
+        this.carForm = this.formBuilder.group({
+            marque: ['', Validators.required],
+            modele: ['', Validators.required],
+            annee: ['', [Validators.required, Validators.min(1900)]],
+            plaqueImmatriculation: ['', Validators.pattern('[0-9]{4} [A-Z]{2,3}')],
+            kilometrage: ['', [Validators.required, Validators.min(0)]],
+            typeCarburant: ['', Validators.required],
+            dateDerniereEntretien: ['', Validators.required],
+            dateExpirationAssurance: ['', Validators.required],
+            image: ''
+        });
     }
 
     loadDemoData() {
@@ -214,24 +290,24 @@ export class CarListComponent implements OnInit {
     }
 
     openNew() {
-        // this.car = {};
+        // this.carForm;
         this.submitted = false;
         this.carDialog = true;
     }
 
     editCar(car: Car) {
-        this.car = { ...car };
+        // this.car = { ...car };
         this.carDialog = true;
     }
 
-    deleteSelectedProducts() {
+    deleteSelectedCars() {
         this.confirmationService.confirm({
             message: 'Are you sure you want to delete the selected products?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.cars.set(this.cars().filter((val) => !this.selectedProducts?.includes(val)));
-                this.selectedProducts = null;
+                this.cars.set(this.cars().filter((val) => !this.selectedCars?.includes(val)));
+                this.selectedCars = null;
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Successful',
@@ -249,7 +325,7 @@ export class CarListComponent implements OnInit {
 
     deleteCar(car: Car) {
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete ' + car.name + '?',
+            message: 'Are you sure you want to delete ' + car.modele + '?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
@@ -299,33 +375,64 @@ export class CarListComponent implements OnInit {
         }
     }
 
-    saveCar() {
+    onSaveCar() {
+        const formData = new FormData();
+        Object.keys(this.carForm.controls).forEach((key) => {
+            formData.append(key, this.carForm.get(key)?.value);
+        });
+        formData.set('image', this.selectedFileCarForm);
+        // formData.set('image', '');
+        console.log(formData);
         this.submitted = true;
         let _cars = this.cars();
-        if (this.car.name?.trim()) {
-            if (this.car.id) {
-                _cars[this.findIndexById(this.car.id)] = this.car;
-                this.cars.set([..._cars]);
+        this.carsService.addCar(formData).subscribe({
+            next: () => {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Successful',
-                    detail: 'Product Updated',
+                    detail: 'Véhicule ajouté',
                     life: 3000
                 });
-            } else {
-                this.car.id = this.createId();
-                this.car.imageUrl = 'product-placeholder.svg';
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Product Created',
-                    life: 3000
-                });
-                this.cars.set([..._cars, this.car]);
-            }
+            },
+            error: () => {}
+        });
+        // if (this.car.modele?.trim()) {
+        //     if (this.car.id) {
+        //         _cars[this.findIndexById(this.car.id)] = this.car;
+        //         this.cars.set([..._cars]);
+        //         this.messageService.add({
+        //             severity: 'success',
+        //             summary: 'Successful',
+        //             detail: 'Product Updated',
+        //             life: 3000
+        //         });
+        //     } else {
+        //         this.car.id = this.createId();
+        //         this.car.imageUrl = 'product-placeholder.svg';
+        //         this.messageService.add({
+        //             severity: 'success',
+        //             summary: 'Successful',
+        //             detail: 'Product Created',
+        //             life: 3000
+        //         });
+        //         this.cars.set([..._cars, this.car]);
+        //     }
 
-            this.carDialog = false;
-            // this.car = {};
+        //     this.carDialog = false;
+        //     // this.car = {};
+        // }
+    }
+
+    setFileData(event: Event): void {
+        const eventTarget: HTMLInputElement | null = event.target as HTMLInputElement | null;
+        if (eventTarget?.files?.[0]) {
+            const file: File = eventTarget.files[0];
+            this.selectedFileCarForm = file;
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                this.carForm.get('image')?.setValue(reader.result as string);
+            });
+            reader.readAsDataURL(file);
         }
     }
 }

@@ -9,8 +9,7 @@ export class AuthInterceptor implements HttpInterceptor {
     constructor(private authService: AuthService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        // const token = this.authService.currentUser()?.token;
-        const token = 'FALSeTOKEN';
+        const token = this.authService.currentUser()?.token;
         let modifiedReq = req;
         if (token) {
             modifiedReq = req.clone({
