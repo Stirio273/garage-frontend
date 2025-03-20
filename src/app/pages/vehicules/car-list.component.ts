@@ -70,6 +70,8 @@ interface ExportColumn {
         ToolbarComponent
     ],
     template: `
+        <p-toast></p-toast>
+
         <app-toolbar [disableDelete]="!selectedCars || !selectedCars.length" (newClicked)="openNew()" (deleteClicked)="deleteSelectedCars()" (exportClicked)="exportCSV()"></app-toolbar>
 
         <div class="flex flex-col">
@@ -82,18 +84,23 @@ interface ExportColumn {
                                 <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
                                     <div class="bg-surface-50 flex justify-center rounded p-6">
                                         <div class="relative mx-auto">
-                                            <img class="rounded w-full" src="assets/pexels-mikebirdy-170811.jpg" alt="Tesla Model S" style="max-width: 300px" />
+                                            <img class="rounded w-full" [src]="item.lienImage" [alt]="item.modele" style="max-width: 300px" />
                                         </div>
                                     </div>
                                     <div class="pt-12">
                                         <div class="flex flex-row justify-between items-start gap-2">
                                             <div>
-                                                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">SUV</span>
-                                                <div class="text-lg font-medium mt-1">Tesla Model S</div>
+                                                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.marque }}</span>
+                                                <div class="text-lg font-medium mt-1">{{ item.modele }}</div>
                                             </div>
                                         </div>
-                                        <div class="flex mt-6">
-                                            <p>Une voiture électrique de luxe avec une autonomie impressionnante et des performances de haut niveau.</p>
+                                        <div class="flex flex-col mt-6">
+                                            <p><b>Année : </b>{{ item.annee }}</p>
+                                            <p><b>Plaque d'immatriculation : </b>{{ item.plaqueImmatriculation }}</p>
+                                            <p><b>Kilométrage : </b>{{ item.kilometrage }}</p>
+                                            <p><b>Type de carburant : </b>{{ item.typeCarburant }}</p>
+                                            <p><b>Date du dernier entretien : </b>{{ item.dateDerniereEntretien | date }}</p>
+                                            <p><b>Date d'expiration de l'assurance : </b>{{ item.dateExpirationAssurance | date }}</p>
                                         </div>
                                         <!-- <div class="flex flex-col gap-6 mt-6">
                                             <span class="text-2xl font-semibold">$ {{ item.price }}</span>
@@ -207,20 +214,7 @@ interface ExportColumn {
 export class CarListComponent implements OnInit {
     carDialog: boolean = false;
 
-    cars = signal<Car[]>([
-        {
-            id: '',
-            marque: '',
-            modele: '',
-            annee: 0,
-            plaqueImmatriculation: '',
-            kilometrage: 0,
-            typeCarburant: '',
-            dateDernierEntretien: new Date(),
-            dateExpirationAssurance: new Date(),
-            image: ''
-        }
-    ]);
+    cars = signal<Car[]>([]);
 
     selectedFileCarForm!: File;
     carForm!: FormGroup;
@@ -249,7 +243,10 @@ export class CarListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadDemoData();
+        // this.loadDemoData();
+        this.carsService.getCars().subscribe((value) => {
+            this.cars.set(value.response.voitures);
+        });
         this.carForm = this.formBuilder.group({
             marque: ['', Validators.required],
             modele: ['', Validators.required],

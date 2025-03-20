@@ -6,7 +6,8 @@ export interface Car {
     plaqueImmatriculation?: string;
     kilometrage?: number;
     typeCarburant?: string;
-    dateDernierEntretien?: Date;
+    dateDerniereEntretien?: Date;
     dateExpirationAssurance?: Date;
     image?: string;
+    lienImage?: string;
 }
