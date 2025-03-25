@@ -40,7 +40,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-car-list-component',
+    selector: 'app-car-list',
     standalone: true,
     imports: [
         CommonModule,
@@ -164,6 +164,14 @@ interface ExportColumn {
                                     <p-radiobutton id="diesel" name="typeCarburant" value="Diesel" formControlName="typeCarburant" />
                                     <label for="diesel">Diesel</label>
                                 </div>
+                                <div class="flex items-center gap-2 col-span-6">
+                                    <p-radiobutton id="hybride" name="typeCarburant" value="Hybride" formControlName="typeCarburant" />
+                                    <label for="hybride">Hybride</label>
+                                </div>
+                                <div class="flex items-center gap-2 col-span-6">
+                                    <p-radiobutton id="electrique" name="typeCarburant" value="Electrique" formControlName="typeCarburant" />
+                                    <label for="electrique">Electrique</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -251,7 +259,7 @@ export class CarListComponent implements OnInit {
             marque: ['', Validators.required],
             modele: ['', Validators.required],
             annee: ['', [Validators.required, Validators.min(1900)]],
-            plaqueImmatriculation: ['', Validators.pattern('[0-9]{4} [A-Z]{2,3}')],
+            plaqueImmatriculation: ['', Validators.pattern('[0-9]{4} [A-Z]{2,4}')],
             kilometrage: ['', [Validators.required, Validators.min(0)]],
             typeCarburant: ['', Validators.required],
             dateDerniereEntretien: ['', Validators.required],

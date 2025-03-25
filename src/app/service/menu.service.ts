@@ -24,7 +24,7 @@ export class MenuService {
             },
             {
                 label: 'Planning du garage',
-                items: [{ label: 'Liste des réservations', icon: 'pi pi-fw pi-calendar', routerLink: ['/pages/reservation'] }]
+                items: [{ label: 'Liste des réservations', icon: 'pi pi-fw pi-calendar', routerLink: ['/pages/reservations'] }]
             },
             {
                 label: 'Services proposés',

@@ -21,7 +21,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Mechanic } from '../../model/mechanic';
 import { MechanicService } from '../../service/mechanic.service';
-import { MessagesModule } from 'primeng/messages';
 
 interface Column {
     field: string;
@@ -35,7 +34,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-mechanic-crud-component',
+    selector: 'app-mechanic-crud',
     imports: [
         CommonModule,
         TableModule,
@@ -58,8 +57,8 @@ interface ExportColumn {
         PasswordModule,
         ToastModule
     ],
-    templateUrl: './mechanic-crud-component.component.html',
-    styleUrl: './mechanic-crud-component.component.scss',
+    templateUrl: './mechanic-crud.component.html',
+    styleUrl: './mechanic-crud.component.scss',
     providers: [MessageService, ConfirmationService]
 })
 export class MechanicCrudComponent implements OnInit {

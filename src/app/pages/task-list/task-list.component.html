@@ -1,0 +1,39 @@
+<p-card>
+    <ng-template pTemplate="title">Liste des tâches</ng-template>
+
+    <ng-template pTemplate="content">
+        <p-table [value]="pendingTasks">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem"></th>
+                    <th>Tâche</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-task>
+                <tr>
+                    <td>
+                        <p-checkbox [(ngModel)]="task.completed" (onChange)="toggleTaskCompletion(task)"></p-checkbox>
+                    </td>
+                    <td>{{ task.name }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <p-table [value]="completedTasks" class="mt-4">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem"></th>
+                    <th>Tâche terminée</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-task>
+                <tr>
+                    <td>
+                        <p-checkbox [(ngModel)]="task.completed" disabled="true"></p-checkbox>
+                    </td>
+                    <td><span class="line-through">{{ task.name }}</span></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+</p-card>

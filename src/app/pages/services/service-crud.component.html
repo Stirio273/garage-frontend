@@ -1,0 +1,112 @@
+<p-toast></p-toast>
+
+<app-toolbar [disableDelete]="!selectedServices || !selectedServices.length" (newClicked)="openNew()"
+    (deleteClicked)="onDeleteSelectedServices()" (exportClicked)="exportCSV()"></app-toolbar>
+
+<p-table #dt [value]="services()" [rows]="10" [columns]="cols" [paginator]="true"
+    [globalFilterFields]="['name', 'description', 'price', 'dureeEstimee', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedServices" [rowHover]="true" dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} services" [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 20, 30]">
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Définition des services</h5>
+            <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Recherche..." />
+            </p-iconfield>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="name" style="min-width:16rem">
+                Nom
+                <p-sortIcon field="name" />
+            </th>
+            <th pSortableColumn="description" style="min-width:16rem">
+                Description
+                <p-sortIcon field="description" />
+            </th>
+            <th pSortableColumn="categorie" style="min-width: 16rem;">
+                Catégorie
+                <p-sortIcon field="categorie" />
+            </th>
+            <th pSortableColumn="price" style="min-width:8rem">
+                Prix
+                <p-sortIcon field="price" />
+            </th>
+            <th pSortableColumn="dureeEstimee" style="min-width: 12rem">
+                Durée estimée
+                <p-sortIcon field="dureeEstimee" />
+            </th>
+            <th style="min-width: 12rem"></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-service>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="service" />
+            </td>
+            <td style="min-width: 16rem">{{ service.name }}</td>
+            <td style="min-width: 16rem">{{ service.description }}</td>
+            <td style="min-width: 16rem">{{ service.prix }}</td>
+            <td>{{ service.dureeEstimee }}</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                    (click)="onEditService(service)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                    (click)="onDeleteService(service)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="serviceDialog" [style]="{ width: '450px' }" header="Détails du service" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <!-- <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image"
+                class="block m-auto pb-4" *ngIf="product.image" /> -->
+            <div>
+                <label for="name" class="block font-bold mb-3">Nom</label>
+                <input type="text" pInputText id="name" [(ngModel)]="service.name" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.name">Le nom est obligatoire.</small>
+            </div>
+            <div>
+                <label for="description" class="block font-bold mb-3">Description</label>
+                <textarea pTextarea id="description" rows="4" [(ngModel)]="service.description" required autofocus
+                    fluid></textarea>
+                <small class="text-red-500" *ngIf="submitted && !service.description">Une description est
+                    obligatoire.</small>
+            </div>
+            <div>
+                <label for="catégorie" class="block font-bold mb-3">Catégorie</label>
+                <p-select [(ngModel)]="service.categorie" [options]="categories" optionLabel="name"
+                    placeholder="Sélectionner" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.categorie">Une description est
+                    obligatoire.</small>
+            </div>
+            <div>
+                <label for="price" class="block font-bold mb-3">Prix</label>
+                <p-inputnumber id="price" [(ngModel)]="service.price" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.price">Le prix du service est
+                    obligatoire.</small>
+            </div>
+            <div>
+                <label for="dureeEstimee" class="block font-bold mb-3">Durée estimée</label>
+                <p-inputnumber id="dureeEstimee" [(ngModel)]="service.dureeEstimee" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.dureeEstimee">Le numéro de téléphone est
+                    obligatoire.</small>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="onSaveService()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

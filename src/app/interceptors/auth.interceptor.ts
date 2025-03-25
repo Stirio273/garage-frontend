@@ -3,10 +3,14 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '../service/auth.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private authService: AuthService,
+        private router: Router
+    ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token = this.authService.currentUser()?.token;
@@ -31,6 +35,7 @@ export class AuthInterceptor implements HttpInterceptor {
                                 return next.handle(newRequest);
                             } else {
                                 this.authService.logout();
+                                this.router.navigate(['/auth/login']);
                                 return throwError(() => error);
                             }
                         }),
