@@ -1,0 +1,144 @@
+.chat-container {
+    height: 100vh;
+    display: flex;
+    background-color: var(--surface-ground);
+}
+
+.chat-sidebar {
+    width: 350px;
+    border-right: 1px solid var(--surface-border);
+    display: flex;
+    flex-direction: column;
+    
+    .user-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .user-item {
+        border-bottom: 1px solid var(--surface-border);
+        transition: all 0.2s;
+
+        &.selected {
+            background-color: var(--primary-50);
+        }
+    }
+
+    :host ::ng-deep {
+        .p-inputicon {
+            width: 100%;
+            
+            i {
+                left: 1rem;
+                color: var(--text-color-secondary);
+            }
+
+            input {
+                width: 100%;
+                padding-left: 2.5rem;
+                border-radius: 2rem;
+                background-color: var(--surface-ground);
+                
+                &:enabled:focus {
+                    box-shadow: 0 0 0 1px var(--primary-color);
+                }
+            }
+        }
+    }
+}
+
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    background-color: var(--surface-card);
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.chat-messages {
+    flex: 1;
+    overflow: hidden;
+    background-color: var(--surface-ground);
+}
+
+.message {
+    max-width: 70%;
+    position: relative;
+
+    &.message-received {
+        background-color: var(--surface-card);
+        border-top-left-radius: 0;
+    }
+
+    &.message-sent {
+        background-color: var(--primary-color);
+        color: var(--primary-color-text);
+        border-top-right-radius: 0;
+        
+        .message-meta {
+            color: var(--primary-100);
+        }
+    }
+}
+
+.chat-input {
+    background-color: var(--surface-card);
+    padding: 1rem;
+
+    .p-inputtext {
+        border-radius: 2rem;
+        padding: 0.75rem 1rem;
+        background-color: var(--surface-ground);
+        border: 1px solid var(--surface-border);
+
+        &:focus {
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+    }
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--surface-card);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+
+    &.status-dot-online {
+        background-color: var(--green-500);
+    }
+
+    &.status-dot-offline {
+        background-color: var(--gray-500);
+    }
+}
+
+:host ::ng-deep {
+    .p-scrollpanel {
+        .p-scrollpanel-wrapper {
+            border-radius: 0;
+            
+            .p-scrollpanel-bar {
+                background-color: var(--surface-border);
+                opacity: 0.3;
+                transition: opacity 0.2s;
+
+                &:hover {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+
+    .p-badge {
+        min-width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1.5rem;
+        background-color: var(--primary-color);
+    }
+}

@@ -1,0 +1,102 @@
+:host ::ng-deep {
+    .p-card {
+        border-radius: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        
+        .p-card-body {
+            padding: 2rem;
+        }
+    }
+
+    .p-dropdown {
+        border-radius: 0.5rem;
+        
+        &:not(.p-disabled).p-focus {
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+    }
+
+    .p-datatable {
+        .p-datatable-header {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        .p-datatable-thead > tr > th {
+            background: var(--surface-section);
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 1rem;
+            border-bottom: 2px solid var(--surface-border);
+        }
+
+        .p-datatable-tbody > tr {
+            &:hover {
+                background: var(--surface-hover);
+            }
+        }
+
+        .p-datatable-tbody > tr > td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--surface-border);
+        }
+    }
+
+    .p-checkbox {
+        .p-checkbox-box {
+            border-radius: 0.25rem;
+            border-color: var(--surface-border);
+            
+            &.p-highlight {
+                background: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+        }
+    }
+
+    .p-inputtextarea {
+        border-radius: 0.5rem;
+        
+        &:enabled:focus {
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+    }
+
+    .p-button {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        
+        &.p-button-raised {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+    }
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-500 {
+    color: var(--text-color-secondary);
+}
+
+.text-900 {
+    color: var(--text-color);
+}
+
+.surface-ground {
+    background-color: var(--surface-ground);
+}
+
+.surface-card {
+    background-color: var(--surface-card);
+}
+
+.surface-border {
+    border-color: var(--surface-border);
+}
+
+.surface-hover {
+    background-color: var(--surface-hover);
+}

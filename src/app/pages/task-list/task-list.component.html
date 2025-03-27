@@ -1,39 +1,60 @@
-<p-card>
-    <ng-template pTemplate="title">Liste des tâches</ng-template>
+<div class="task-list-container">
+    <p-messages [(value)]="messages" [enableService]="false" [closable]="true"></p-messages>
 
-    <ng-template pTemplate="content">
-        <p-table [value]="pendingTasks">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 3rem"></th>
-                    <th>Tâche</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-task>
-                <tr>
-                    <td>
-                        <p-checkbox [(ngModel)]="task.completed" (onChange)="toggleTaskCompletion(task)"></p-checkbox>
-                    </td>
-                    <td>{{ task.name }}</td>
-                </tr>
-            </ng-template>
-        </p-table>
+    <div class="header flex justify-content-between align-items-center mb-4">
+        <h1>Liste des tâches</h1>
+        <!-- <button pButton label="+ Create Task" class="p-button-primary"></button> -->
+    </div>
 
-        <p-table [value]="completedTasks" class="mt-4">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 3rem"></th>
-                    <th>Tâche terminée</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-task>
-                <tr>
-                    <td>
-                        <p-checkbox [(ngModel)]="task.completed" disabled="true"></p-checkbox>
-                    </td>
-                    <td><span class="line-through">{{ task.name }}</span></td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </ng-template>
-</p-card>
+    <div class="todo-section mb-4">
+        <h2 class="section-title mb-3">A faire</h2>
+        <div class="task-items">
+            <div *ngFor="let task of pendingTasks" class="task-item p-3 mb-2 surface-card border-round-lg">
+                <div class="flex align-items-center justify-content-between">
+                    <div class="flex align-items-center gap-3">
+                        <p-checkbox [ngModel]="task.completed" (onChange)="toggleTaskCompletion(task)"></p-checkbox>
+                        <span class="task-name">{{task.name}}</span>
+                    </div>
+                    <div class="flex align-items-center gap-3">
+                        <span class="task-meta flex align-items-center gap-2">
+                            <i class="pi pi-comments"></i> {{task.commentsCount}}
+                            <i class="pi pi-paperclip"></i> {{task.attachmentsCount}}
+                            <i class="pi pi-calendar"></i> {{task.dueDate | date:'dd MMM'}}
+                        </span>
+                        <div class="assigned-users">
+                            <p-avatar *ngFor="let user of task.assignedUsers" [image]="user" size="normal"
+                                shape="circle" class="ml-2"></p-avatar>
+                        </div>
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="completed-section">
+        <h2 class="section-title mb-3">Complétées</h2>
+        <div class="task-items">
+            <div *ngFor="let task of completedTasks" class="task-item p-3 mb-2 surface-card border-round-lg">
+                <div class="flex align-items-center justify-content-between">
+                    <div class="flex align-items-center gap-3">
+                        <p-checkbox [(ngModel)]="task.completed" [disabled]="true"></p-checkbox>
+                        <span class="task-name line-through text-500">{{task.name}}</span>
+                    </div>
+                    <div class="flex align-items-center gap-3">
+                        <span class="task-meta flex align-items-center gap-2 text-500">
+                            <i class="pi pi-comments"></i> {{task.commentsCount}}
+                            <i class="pi pi-paperclip"></i> {{task.attachmentsCount}}
+                            <i class="pi pi-calendar"></i> {{task.dueDate | date:'dd MMM'}}
+                        </span>
+                        <div class="assigned-users">
+                            <p-avatar *ngFor="let user of task.assignedUsers" [image]="user" size="normal"
+                                shape="circle" class="ml-2"></p-avatar>
+                        </div>
+                        <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

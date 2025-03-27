@@ -1,0 +1,102 @@
+<div class="chat-container">
+    <!-- Left Sidebar -->
+    <div class="chat-sidebar surface-card">
+        <!-- Current User -->
+        <div class="current-user p-3 border-bottom-1 surface-border">
+            <div class="flex align-items-center">
+                <p-avatar [image]="currentUserAvatar" size="large" shape="circle"></p-avatar>
+                <h2 class="m-0 ml-2 text-xl">{{currentUser}}</h2>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="p-3">
+            <p-iconfield class="p-iconfield w-full p-iconfield-left">
+                <p-inputicon class="pi pi-search p-inputicon">
+                </p-inputicon>
+                <input type="text" pInputText [(ngModel)]="searchQuery" class="w-full" placeholder="Search contacts...">
+            </p-iconfield>
+        </div>
+
+        <!-- User List -->
+        <div class="user-list">
+            <div *ngFor="let user of getFilteredUsers()" (click)="selectUser(user)"
+                [class.selected]="selectedUser?.id === user.id"
+                class="user-item p-3 cursor-pointer hover:surface-hover flex align-items-center justify-content-between">
+                <div class="flex align-items-center gap-2">
+                    <div class="relative">
+                        <p-avatar [image]="user.avatar" size="large" shape="circle"></p-avatar>
+                        <div [class.status-dot-online]="user.status === 'online'"
+                            [class.status-dot-offline]="user.status === 'offline'" class="status-dot"></div>
+                    </div>
+                    <div>
+                        <h3 class="m-0 font-medium">{{user.name}}</h3>
+                        <span class="text-500 text-sm">{{user.lastMessage}}</span>
+                    </div>
+                </div>
+                <div class="flex flex-column align-items-end gap-2">
+                    <span class="text-500 text-xs">{{user.lastActive}}</span>
+                    <p-badge *ngIf="user.unreadCount" [value]="user.unreadCount.toString()" severity="info"></p-badge>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area">
+        <!-- Chat Header -->
+        <div class="chat-header p-3 surface-card border-bottom-1 surface-border">
+            <div class="flex align-items-center justify-content-between">
+                <div class="flex align-items-center gap-2">
+                    <div class="relative">
+                        <p-avatar [image]="selectedUser?.avatar" size="large" shape="circle"></p-avatar>
+                        <div [class.status-dot-online]="selectedUser?.status === 'online'"
+                            [class.status-dot-offline]="selectedUser?.status === 'offline'" class="status-dot"></div>
+                    </div>
+                    <div>
+                        <h2 class="m-0 text-xl font-medium">{{selectedUser?.name}}</h2>
+                        <span class="text-500">Last active {{selectedUser?.lastActive}}</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button pButton icon="pi pi-phone" class="p-button-text p-button-rounded"></button>
+                    <button pButton icon="pi pi-video" class="p-button-text p-button-rounded"></button>
+                    <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-messages p-3">
+            <p-scrollPanel [style]="{width: '100%', height: 'calc(100vh - 140px)'}">
+                <div class="flex flex-column gap-3">
+                    <div *ngFor="let message of messages" [class.justify-content-end]="message.sender === currentUser"
+                        class="flex w-full">
+                        <div [class.message-sent]="message.sender === currentUser"
+                            [class.message-received]="message.sender !== currentUser"
+                            class="message p-3 border-round-xl">
+                            <p class="m-0 line-height-3">{{message.text}}</p>
+                            <div class="message-meta flex align-items-center gap-2 mt-2">
+                                <span class="text-xs">{{message.timestamp | date:'HH:mm'}}</span>
+                                <i *ngIf="message.sender === currentUser" [class.pi-check]="message.status === 'sent'"
+                                    [class.pi-check-circle]="message.status === 'delivered'" [class.pi-check-circle
+                                    text-primary]="message.status === 'read'" class="pi text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p-scrollPanel>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input p-3 surface-card border-top-1 surface-border">
+            <div class="flex align-items-center gap-2">
+                <button pButton icon="pi pi-paperclip" class="p-button-text p-button-rounded"></button>
+                <button pButton icon="pi pi-smile" class="p-button-text p-button-rounded"></button>
+                <input type="text" pInputText [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" class="flex-1"
+                    placeholder="Type a message...">
+                <button pButton icon="pi pi-send" (click)="sendMessage()" class="p-button-rounded"></button>
+            </div>
+        </div>
+    </div>
+</div>

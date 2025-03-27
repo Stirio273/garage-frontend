@@ -60,7 +60,7 @@ export class MenuService {
                 label: 'Services et devis',
                 items: [
                     { label: 'Liste des services', icon: 'pi pi-fw pi-cog', routerLink: ['/pages/services'] },
-                    { label: 'Demande de devis', icon: 'pi pi-fw pi-pencil', routerLink: ['/pages/devis'] }
+                    { label: 'Demande de devis', icon: 'pi pi-fw pi-pencil', routerLink: ['/pages/demande-devis'] }
                 ]
             },
             {

@@ -1,0 +1,58 @@
+.task-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+}
+
+.task-item {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    transition: all 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-name {
+        font-weight: 500;
+    }
+
+    .task-meta {
+        color: var(--text-color-secondary);
+        font-size: 0.875rem;
+
+        i {
+            font-size: 1rem;
+        }
+    }
+
+    .assigned-users {
+        display: flex;
+        align-items: center;
+
+        :not(:first-child) {
+            margin-left: -0.5rem;
+        }
+    }
+}
+
+.completed-section {
+    .task-item {
+        opacity: 0.8;
+    }
+}

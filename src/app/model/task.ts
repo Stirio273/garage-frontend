@@ -5,4 +5,7 @@ export interface Task {
     completed: boolean;
     startDate: Date;
     dueDate: Date;
+    commentsCount: number;
+    attachmentsCount: number;
+    assignedUsers: string[]; // Array of user avatar URLs
 }

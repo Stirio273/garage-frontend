@@ -10,10 +10,11 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
     selector: 'app-task-list',
-    imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, DialogModule, MessagesModule, TableModule, CardModule, CheckboxModule],
+    imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, DialogModule, MessagesModule, TableModule, CardModule, CheckboxModule, AvatarModule],
     templateUrl: './task-list.component.html',
     styleUrl: './task-list.component.scss'
 })
@@ -28,15 +29,74 @@ export class TaskListComponent {
 
     constructor(private service: TaskService) {
         this.tasks = [
-            { id: '1', name: 'Acheter du lait', description: '', startDate: new Date(), dueDate: new Date(), completed: false },
-            { id: '2', name: "Envoyer l'email", description: '', startDate: new Date(), dueDate: new Date(), completed: false },
-            { id: '3', name: 'Réviser Angular', description: '', startDate: new Date(), dueDate: new Date(), completed: true },
-            { id: '4', name: 'Faire du sport', description: '', startDate: new Date(), dueDate: new Date(), completed: true }
+            {
+                id: '1',
+                name: 'Create a New Landing UI',
+                description: '',
+                startDate: new Date(),
+                dueDate: new Date('2024-05-13'),
+                completed: false,
+                commentsCount: 3,
+                attachmentsCount: 2,
+                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg', '/assets/avatars/avatar3.jpg']
+            },
+            {
+                id: '2',
+                name: 'Create Dashboard',
+                description: '',
+                startDate: new Date(),
+                dueDate: new Date('2024-05-16'),
+                completed: false,
+                commentsCount: 2,
+                attachmentsCount: 4,
+                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg']
+            },
+            {
+                id: '3',
+                name: 'Brand logo design',
+                description: '',
+                startDate: new Date(),
+                dueDate: new Date('2024-05-17'),
+                completed: false,
+                commentsCount: 4,
+                attachmentsCount: 1,
+                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg', '/assets/avatars/avatar3.jpg']
+            },
+            {
+                id: '4',
+                name: 'Create Dashboard',
+                description: '',
+                startDate: new Date(),
+                dueDate: new Date('2024-05-20'),
+                completed: false,
+                commentsCount: 1,
+                attachmentsCount: 3,
+                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg']
+            }
         ];
     }
 
     toggleTaskCompletion(task: Task) {
-        task.completed = !task.completed;
+        // Call service to update status
+        this.service.updateTaskStatus(task.id, !task.completed).subscribe({
+            next: () => {
+                // If service call successful, update local state
+                task.completed = !task.completed;
+            },
+            error: () => {
+                // If service call fails, show error message
+                this.messages = [
+                    {
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Failed to update task status. Please try again.'
+                    }
+                ];
+
+                // Revert checkbox state
+                task.completed = !task.completed;
+            }
+        });
     }
 
     get pendingTasks() {
