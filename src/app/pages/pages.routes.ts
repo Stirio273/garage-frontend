@@ -8,6 +8,7 @@ import { ReservationListComponent } from './reservation-list/reservation-list.co
 import { TaskListComponent } from './task-list/task-list.component';
 import { ChatComponent } from './chat/chat.component';
 import { DemandeDevisComponent } from './demande-devis/demande-devis.component';
+import { DetailsDevisComponent } from './details-devis/details-devis.component';
 
 export default [
     { path: 'empty', component: Empty },
@@ -18,5 +19,6 @@ export default [
     { path: 'my-tasks', component: TaskListComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
     { path: 'messaging', component: ChatComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
     { path: 'demande-devis', component: DemandeDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
+    { path: 'details-devis', component: DetailsDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

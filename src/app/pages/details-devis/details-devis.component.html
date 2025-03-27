@@ -1,0 +1,83 @@
+<div class="surface-ground p-4">
+    <div class="grid">
+        <div class="col-12">
+            <p-card styleClass="shadow-2">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="text-3xl font-bold border-1 border-round p-2 inline-block">GARAGE REVAUTO</h1>
+                    <div class="mt-3">
+                        <div class="text-lg border-1 border-round p-2 inline-block">{{quoteNumber}}</div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="text-lg border-1 border-round p-2 inline-block">{{customerInfo}}</div>
+                    </div>
+                </div>
+
+                <!-- Quote Title -->
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold">OBJET: Devis</h2>
+                    <p class="mt-2">Monsieur,</p>
+                    <p>Suite à votre demande, vous trouverez ci-après le détail de notre devis.</p>
+                </div>
+
+                <!-- Services Table -->
+                <div class="mb-4">
+                    <p-table [value]="services" [tableStyle]="{'min-width': '50rem'}" styleClass="p-datatable-sm">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="text-center">Désignation</th>
+                                <th class="text-center" style="width: 100px">Quantité</th>
+                                <th class="text-center" style="width: 150px">Prix unitaire</th>
+                                <th class="text-center" style="width: 150px">Montant</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-service>
+                            <tr>
+                                <td>{{service.designation}}</td>
+                                <td class="text-center">{{service.quantity}}</td>
+                                <td class="text-right">{{service.unitPrice | number:'1.0-0'}}</td>
+                                <td class="text-right">{{service.amount | number:'1.0-0'}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <tr class="border-1">
+                                <td colspan="3" class="text-center font-semibold border-1">Total Hors taxe</td>
+                                <td class="text-right font-semibold border-1">{{getTotalHT() | number:'1.0-0'}} MGA
+                                </td>
+                            </tr>
+                            <tr class="border-1">
+                                <td colspan="3" class="text-center font-semibold border-1">Montant TVA</td>
+                                <td class="text-right font-semibold border-1">- MGA</td>
+                            </tr>
+                            <tr class="border-1">
+                                <td colspan="3" class="text-center font-bold border-1">Total TTC</td>
+                                <td class="text-right font-bold border-1">{{getTotalTTC() | number:'1.0-0'}} MGA</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+                <!-- Amount in Words -->
+                <div class="mb-4">
+                    <p class="font-semibold">Devis arrêté à la présente somme de:</p>
+                    <p class="font-italic">{{numberToWords(getTotalTTC())}} Ariary</p>
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Footer -->
+                <!-- <div class="text-right mt-4">
+                    <p class="mb-2">Veuillez agréer mes salutations distinguées.</p>
+                    <div class="mt-4">
+                        <p class="font-semibold">Signature</p>
+                    </div>
+                </div> -->
+
+                <!-- Company Info -->
+                <div class="text-center mt-6 surface-ground p-3 border-round">
+                    <p class="font-semibold mb-2">GARAGE REVAUTO</p>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</div>

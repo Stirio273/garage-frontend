@@ -10,6 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 interface Service {
     id: number;
@@ -94,12 +95,12 @@ export class DemandeDevisComponent {
 
     selectedCar: Car | null = null;
     additionalNotes: string = '';
-    messageService: MessageService;
     private cdnLinkElement!: HTMLLinkElement;
 
-    constructor(messageService: MessageService) {
-        this.messageService = messageService;
-    }
+    constructor(
+        private messageService: MessageService,
+        private router: Router
+    ) {}
 
     ngOnInit(): void {
         this.cdnLinkElement = document.createElement('link');
@@ -127,7 +128,7 @@ export class DemandeDevisComponent {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Please select a car'
+                detail: 'Veuillez sélectionner une voiture'
             });
             return;
         }
@@ -136,7 +137,7 @@ export class DemandeDevisComponent {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Please select at least one service'
+                detail: 'Veuillez sélectionner au moins un service'
             });
             return;
         }

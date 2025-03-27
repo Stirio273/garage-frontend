@@ -1,0 +1,101 @@
+:host ::ng-deep {
+    .p-card {
+        border-radius: 1rem;
+
+        .p-card-body {
+            padding: 2rem;
+        }
+    }
+
+    .p-datatable {
+        .p-datatable-thead > tr > th {
+            background: var(--surface-section);
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 1rem;
+            border: 1px solid var(--surface-border);
+            white-space: nowrap;
+            &.text-center {
+                text-align: center !important;
+            }
+
+            &.text-right {
+                text-align: right !important;
+            }
+        }
+
+        .p-datatable-tbody > tr > td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--surface-border);
+
+            &.text-center {
+                text-align: center !important;
+            }
+
+            &.text-right {
+                text-align: right !important;
+            }
+        }
+
+        .p-datatable-tbody:has(+ .p-datatable-tfoot) > tr:last-child > td {
+            border-width: 1px;
+        }
+
+        .p-datatable-tfoot > tr > td {
+            // background: var(--surface-ground);
+            // border: 1px solid var(--surface-border);
+            // padding: 1rem;
+
+            &.text-center {
+                text-align: center !important;
+            }
+
+            &.text-right {
+                text-align: right !important;
+            }
+        }
+    }
+
+    .p-divider {
+        &.p-divider-horizontal {
+            margin: 2rem 0;
+            padding: 0;
+        }
+    }
+}
+
+// Custom styles
+.border-1 {
+    border: 1px solid var(--surface-border);
+}
+
+.border-round {
+    border-radius: 6px;
+}
+
+.shadow-2 {
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.03),
+        0 0 2px rgba(0, 0, 0, 0.06),
+        0 2px 6px rgba(0, 0, 0, 0.12) !important;
+}
+
+// Responsive adjustments
+@media screen and (max-width: 768px) {
+    :host ::ng-deep {
+        .p-datatable {
+            .p-datatable-thead > tr > th,
+            .p-datatable-tbody > tr > td {
+                padding: 0.5rem;
+            }
+        }
+    }
+
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+
+    .text-xl {
+        font-size: 1.25rem;
+    }
+}
