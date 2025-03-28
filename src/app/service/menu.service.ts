@@ -65,7 +65,7 @@ export class MenuService {
             },
             {
                 label: 'Réservations',
-                items: [{ label: 'Prendre un rendez-vous', icon: 'pi pi-fw pi-calendar', routerLink: ['/pages/reservations'] }]
+                items: [{ label: 'Prendre un rendez-vous', icon: 'pi pi-fw pi-calendar', routerLink: ['/pages/rendez-vous'] }]
             },
             {
                 label: 'Messages et assistances',

@@ -27,6 +27,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -67,7 +68,8 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule,
         DataViewModule,
-        ToolbarComponent
+        ToolbarComponent,
+        ProgressSpinnerModule
     ],
     template: `
         <p-toast></p-toast>
@@ -77,44 +79,47 @@ interface ExportColumn {
         <div class="flex flex-col">
             <div class="card">
                 <div class="font-semibold text-xl"><h1>Mes véhicules</h1></div>
-                <p-dataview [value]="cars()" layout="grid">
-                    <ng-template #grid let-items>
-                        <div class="grid grid-cols-12 gap-4 mt-4">
-                            <div *ngFor="let item of items; let i = index" class="col-span-12 sm:col-span-6 lg:col-span-4 p-2">
-                                <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
-                                    <div class="bg-surface-50 flex justify-center rounded p-6">
-                                        <div class="relative mx-auto">
-                                            <img class="rounded w-full" [src]="item.lienImage" [alt]="item.modele" style="max-width: 300px" />
-                                        </div>
-                                    </div>
-                                    <div class="pt-12">
-                                        <div class="flex flex-row justify-between items-start gap-2">
-                                            <div>
-                                                <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.marque }}</span>
-                                                <div class="text-lg font-medium mt-1">{{ item.modele }}</div>
+                <div class="relative">
+                    <p-dataview *ngIf="!loading" [value]="cars()" layout="grid">
+                        <ng-template #grid let-items>
+                            <div class="grid grid-cols-12 gap-4 mt-4">
+                                <div *ngFor="let item of items; let i = index" class="col-span-12 sm:col-span-6 lg:col-span-4 p-2">
+                                    <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
+                                        <div class="bg-surface-50 flex justify-center rounded p-6">
+                                            <div class="relative mx-auto">
+                                                <img class="rounded w-full" [src]="item.lienImage" [alt]="item.modele" style="max-width: 300px" />
                                             </div>
                                         </div>
-                                        <div class="flex flex-col mt-6">
-                                            <p><b>Année : </b>{{ item.annee }}</p>
-                                            <p><b>Plaque d'immatriculation : </b>{{ item.plaqueImmatriculation }}</p>
-                                            <p><b>Kilométrage : </b>{{ item.kilometrage }}</p>
-                                            <p><b>Type de carburant : </b>{{ item.typeCarburant }}</p>
-                                            <p><b>Date du dernier entretien : </b>{{ item.dateDerniereEntretien | date }}</p>
-                                            <p><b>Date d'expiration de l'assurance : </b>{{ item.dateExpirationAssurance | date }}</p>
-                                        </div>
-                                        <!-- <div class="flex flex-col gap-6 mt-6">
-                                            <span class="text-2xl font-semibold">$ {{ item.price }}</span>
-                                            <div class="flex gap-2">
-                                                <p-button icon="pi pi-shopping-cart" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto whitespace-nowrap" styleClass="w-full"></p-button>
-                                                <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true"></p-button>
+                                        <div class="pt-12">
+                                            <div class="flex flex-row justify-between items-start gap-2">
+                                                <div>
+                                                    <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.marque }}</span>
+                                                    <div class="text-lg font-medium mt-1">{{ item.modele }}</div>
+                                                </div>
                                             </div>
-                                        </div> -->
+                                            <div class="flex flex-col mt-6">
+                                                <p><b>Année : </b>{{ item.annee }}</p>
+                                                <p><b>Plaque d'immatriculation : </b>{{ item.plaqueImmatriculation }}</p>
+                                                <p><b>Kilométrage : </b>{{ item.kilometrage }}</p>
+                                                <p><b>Type de carburant : </b>{{ item.typeCarburant }}</p>
+                                                <p><b>Date du dernier entretien : </b>{{ item.dateDerniereEntretien | date }}</p>
+                                                <p><b>Date d'expiration de l'assurance : </b>{{ item.dateExpirationAssurance | date }}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </ng-template>
+                    </p-dataview>
+
+                    <!-- Loading Overlay -->
+                    <div *ngIf="loading" class="loading-overlay">
+                        <div class="loading-content">
+                            <p-progressSpinner [style]="{ width: '50px', height: '50px' }" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"> </p-progressSpinner>
+                            <span class="mt-3">Chargement des véhicules...</span>
                         </div>
-                    </ng-template>
-                </p-dataview>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -239,6 +244,8 @@ export class CarListComponent implements OnInit {
 
     cols!: Column[];
 
+    loading: boolean = true;
+
     constructor(
         private carsService: CarsService,
         private messageService: MessageService,
@@ -252,8 +259,20 @@ export class CarListComponent implements OnInit {
 
     ngOnInit() {
         // this.loadDemoData();
-        this.carsService.getCars().subscribe((value) => {
-            this.cars.set(value.response.voitures);
+        this.carsService.getCars().subscribe({
+            next: (value) => {
+                this.cars.set(value.response.voitures);
+                this.loading = false;
+            },
+            error: (error) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Erreur lors du chargement des véhicules',
+                    life: 3000
+                });
+                this.loading = false;
+            }
         });
         this.carForm = this.formBuilder.group({
             marque: ['', Validators.required],

@@ -20,14 +20,23 @@
                 <!-- Car Selection -->
                 <div class="mb-4">
                     <label class="block text-900 font-medium mb-2">Sélectionner un véhicule</label>
-                    <p-dropdown [options]="cars" [(ngModel)]="selectedCar" optionLabel="brand" [showClear]="true"
+                    <p-dropdown [options]="cars" [(ngModel)]="selectedCar" optionLabel="marque" [showClear]="true"
                         placeholder="Choisir un véhicule" class="w-full">
                         <ng-template pTemplate="item" let-car>
                             <div class="flex align-items-center">
                                 <i class="pi pi-car mr-2"></i>
                                 <div>
-                                    <div class="font-medium">{{car.brand}} {{car.model}}</div>
-                                    <div class="text-sm text-500">{{car.year}} - {{car.plateNumber}}</div>
+                                    <div class="font-medium">{{car.marque}} {{car.modele}}</div>
+                                    <div class="text-sm text-500">{{car.annee}} - {{car.plaqueImmatriculation}}</div>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="selectedItem" let-car>
+                            <div class="flex align-items-center">
+                                <i class="pi pi-car mr-2"></i>
+                                <div>
+                                    <div class="font-medium">{{car.marque}} {{car.modele}}</div>
+                                    <div class="text-sm text-500">{{car.annee}} - {{car.plaqueImmatriculation}}</div>
                                 </div>
                             </div>
                         </ng-template>

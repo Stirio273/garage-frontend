@@ -9,6 +9,7 @@ import { TaskListComponent } from './task-list/task-list.component';
 import { ChatComponent } from './chat/chat.component';
 import { DemandeDevisComponent } from './demande-devis/demande-devis.component';
 import { DetailsDevisComponent } from './details-devis/details-devis.component';
+import { AppointmentRequestComponent } from './appointment-request/appointment-request.component';
 
 export default [
     { path: 'empty', component: Empty },
@@ -20,5 +21,6 @@ export default [
     { path: 'messaging', component: ChatComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
     { path: 'demande-devis', component: DemandeDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: 'details-devis', component: DetailsDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
+    { path: 'rendez-vous', component: AppointmentRequestComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

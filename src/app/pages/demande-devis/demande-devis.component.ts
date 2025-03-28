@@ -11,6 +11,8 @@ import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
+import { CarsService } from '../../service/cars.service';
+import { Car } from '../../model/car';
 
 interface Service {
     id: number;
@@ -19,14 +21,6 @@ interface Service {
     price: number;
     duration: string;
     selected?: boolean;
-}
-
-interface Car {
-    id: number;
-    brand: string;
-    model: string;
-    year: number;
-    plateNumber: string;
 }
 
 @Component({
@@ -76,22 +70,7 @@ export class DemandeDevisComponent {
         }
     ];
 
-    cars: Car[] = [
-        {
-            id: 1,
-            brand: 'Toyota',
-            model: 'Camry',
-            year: 2020,
-            plateNumber: 'ABC-123'
-        },
-        {
-            id: 2,
-            brand: 'Honda',
-            model: 'Civic',
-            year: 2021,
-            plateNumber: 'XYZ-789'
-        }
-    ];
+    cars!: Car[];
 
     selectedCar: Car | null = null;
     additionalNotes: string = '';
@@ -99,6 +78,7 @@ export class DemandeDevisComponent {
 
     constructor(
         private messageService: MessageService,
+        private carService: CarsService,
         private router: Router
     ) {}
 
@@ -109,6 +89,9 @@ export class DemandeDevisComponent {
 
         // Append the link element to the head of the document
         document.head.appendChild(this.cdnLinkElement);
+        this.carService.getCars().subscribe((response) => {
+            this.cars = response.response.voitures;
+        });
     }
 
     onServiceSelect(service: Service) {
