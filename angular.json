@@ -36,8 +36,8 @@
                                 "output": "/assets"
                             },
                             {
-                                "glob": "**/*",
-                                "input": "src/_redirects"
+                                "glob": "_redirects",
+                                "input": "src/"
                             }
                         ],
                         "styles": [
