@@ -182,4 +182,10 @@ export class AppointmentRequestComponent implements OnInit {
             detail: 'Réservation confirmée avec succès'
         });
     }
+
+    ngOnDestroy() {
+        if (this.cdnLinkElement) {
+            document.head.removeChild(this.cdnLinkElement);
+        }
+    }
 }
