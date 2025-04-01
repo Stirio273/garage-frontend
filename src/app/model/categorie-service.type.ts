@@ -1,1 +1,1 @@
-export type CategorieType = 'entretien' | 'reparation' | 'diagnostic';
+export type CategorieType = 'Entretien' | 'Réparation' | 'Autre';

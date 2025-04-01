@@ -57,13 +57,19 @@ export class ServiceCrudComponent implements OnInit {
 
     ngOnInit(): void {
         this.categories = [
-            { name: 'Entretien', value: 'entretien' },
-            { name: 'Diagnostic', value: 'diagnostic' },
-            { name: 'Réparation', value: 'reparation' }
+            { name: 'Entretien', value: 'Entretien' },
+            { name: 'Réparation', value: 'Réparation' },
+            { name: 'Autre', value: 'Autre' }
         ];
         this.serviceService.getServices().subscribe((value) => {
-            this.services.set(value);
+            this.services.set(value.data);
         });
+        this.cols = [
+            { field: 'description', header: 'Description' },
+            { field: 'commentaires', header: 'Commentaires' },
+            { field: 'cout', header: 'Prix' },
+            { field: 'typeservice', header: 'Catégorie' }
+        ];
     }
 
     exportCSV() {
@@ -75,7 +81,7 @@ export class ServiceCrudComponent implements OnInit {
     }
 
     openNew() {
-        this.service = { price: 0, dureeEstimee: 0 };
+        this.service = { cout: 0, dureeEstimee: 0 };
         this.submitted = false;
         this.serviceDialog = true;
     }
@@ -111,17 +117,28 @@ export class ServiceCrudComponent implements OnInit {
 
     onDeleteService(service: Service) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer' + service.name + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + service.description + '?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.services.set(this.services().filter((val) => val.id !== service.id));
-                this.service = { price: 0, dureeEstimee: 0 };
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Service supprimé',
-                    life: 3000
+                this.serviceService.deleteService(service._id as string).subscribe({
+                    next: (response) => {
+                        this.services.set(this.services().filter((val) => val._id !== service._id));
+                        this.service = { cout: 0, dureeEstimee: 0 };
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Successful',
+                            detail: 'Service supprimé',
+                            life: 3000
+                        });
+                    },
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Erreur lors de la suppression du service'
+                        });
+                    }
                 });
             }
         });
@@ -130,7 +147,7 @@ export class ServiceCrudComponent implements OnInit {
     findIndexById(id: string): number {
         let index = -1;
         for (let i = 0; i < this.services().length; i++) {
-            if (this.services()[i].id === id) {
+            if (this.services()[i]._id === id) {
                 index = i;
                 break;
             }
@@ -142,17 +159,29 @@ export class ServiceCrudComponent implements OnInit {
     onSaveService() {
         this.submitted = true;
         let _services = this.services();
-        if (this.service.name?.trim()) {
-            if (this.service.id) {
-                // _services[this.findIndexById(this.service.id)] = this.service;
-                // this.services.set([..._services]);
-                // this.messageService.add({
-                //     severity: 'success',
-                //     summary: 'Successful',
-                //     detail: 'Service mis à jour',
-                //     life: 3000
-                // });
+        if (this.service.description?.trim()) {
+            if (this.service._id) {
+                _services[this.findIndexById(this.service._id as string)] = this.service;
+                this.services.set([..._services]);
+                this.serviceService.updateService(this.service).subscribe({
+                    next: (response) => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Successful',
+                            detail: 'Service mis à jour',
+                            life: 3000
+                        });
+                    },
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Erreur lors de la création du service'
+                        });
+                    }
+                });
             } else {
+                this.services.set([..._services, this.service]);
                 this.serviceService.addService(this.service).subscribe({
                     next: (response) => {
                         this.messageService.add({
@@ -162,13 +191,18 @@ export class ServiceCrudComponent implements OnInit {
                             life: 3000
                         });
                     },
-                    error: (error) => {}
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Erreur lors de la création du service'
+                        });
+                    }
                 });
-                // this.mechanics.set([..._mechanics, this.mechanic]);
             }
 
             this.serviceDialog = false;
-            this.service = { price: 0, dureeEstimee: 0 };
+            this.service = { cout: 0, dureeEstimee: 0 };
         }
     }
 }

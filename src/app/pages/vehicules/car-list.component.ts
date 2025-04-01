@@ -80,7 +80,7 @@ interface ExportColumn {
             <div class="card">
                 <div class="font-semibold text-xl"><h1>Mes véhicules</h1></div>
                 <div class="relative">
-                    <p-dataview *ngIf="!loading" [value]="cars()" layout="grid">
+                    <p-dataview *ngIf="!loading" [value]="cars()" layout="grid" emptyMessage="Aucun véhicule trouvé">
                         <ng-template #grid let-items>
                             <div class="grid grid-cols-12 gap-4 mt-4">
                                 <div *ngFor="let item of items; let i = index" class="col-span-12 sm:col-span-6 lg:col-span-4 p-2">

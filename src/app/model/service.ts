@@ -1,10 +1,10 @@
 import { CategorieType } from './categorie-service.type';
 
 export interface Service {
-    id?: string;
-    name?: string;
+    _id?: string;
     description?: string;
-    price?: number;
+    commentaires?: string;
+    cout?: number;
     dureeEstimee?: number;
-    categorie?: CategorieType;
+    typeservice?: CategorieType;
 }

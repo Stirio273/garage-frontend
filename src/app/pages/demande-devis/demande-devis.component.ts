@@ -13,6 +13,7 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { CarsService } from '../../service/cars.service';
 import { Car } from '../../model/car';
+import { ServiceService } from '../../service/service.service';
 
 interface Service {
     id: number;
@@ -79,6 +80,7 @@ export class DemandeDevisComponent {
     constructor(
         private messageService: MessageService,
         private carService: CarsService,
+        private serviceService: ServiceService,
         private router: Router
     ) {}
 
@@ -91,6 +93,10 @@ export class DemandeDevisComponent {
         document.head.appendChild(this.cdnLinkElement);
         this.carService.getCars().subscribe((response) => {
             this.cars = response.response.voitures;
+        });
+        this.serviceService.getServices().subscribe((response) => {
+            console.log(response);
+            // this.services = response.data;
         });
     }
 

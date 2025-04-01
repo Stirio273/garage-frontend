@@ -15,9 +15,9 @@ export class CarsService {
     ) {}
 
     getCars(): Observable<any> {
-        return this.http.get<any>(`${environment.apiUrl}/listVoiture`, { params: { userEmail: this.auth.currentUser()?.email as string } }).pipe(
+        return this.http.get<any>(`${environment.apiUrl}/client/listVoiture`, { params: { userEmail: this.auth.currentUser()?.email as string } }).pipe(
             tap((response) => {
-                // console.log(response);
+                console.log(response);
             }),
             catchError((error) => {
                 return throwError(() => new Error('Erreur lors de la récupération de la liste des véhicules'));
@@ -27,7 +27,7 @@ export class CarsService {
 
     addCar(car: FormData): Observable<string> {
         car.append('userEmail', this.auth.currentUser()?.email as string);
-        return this.http.post<string>(`${environment.apiUrl}/addVoiture`, { data: car }).pipe(
+        return this.http.post<string>(`${environment.apiUrl}/client/addVoiture`, { data: car }).pipe(
             tap((response) => {
                 console.log(response);
             }),

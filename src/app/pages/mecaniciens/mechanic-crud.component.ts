@@ -78,7 +78,17 @@ export class MechanicCrudComponent implements OnInit {
         private confirmationService: ConfirmationService
     ) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.mechanicService.getMechanics().subscribe((response) => {
+            this.mechanics.set(response.data);
+        });
+        this.cols = [
+            { field: 'name', header: 'Nom' },
+            { field: 'firstName', header: 'Prénom' },
+            { field: 'email', header: 'Email' },
+            { field: 'phoneNumber', header: 'Téléphone' }
+        ];
+    }
 
     exportCSV() {
         this.dt.exportCSV();
@@ -125,18 +135,29 @@ export class MechanicCrudComponent implements OnInit {
 
     onDeleteMechanic(mechanic: Mechanic) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer' + mechanic.name + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + mechanic.name + '?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.mechanics.set(this.mechanics().filter((val) => val.id !== mechanic.id));
-                this.mechanic = {};
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Product Deleted',
-                    life: 3000
+                this.mechanicService.deleteMechanic(mechanic._id as string).subscribe({
+                    next: (response) => {
+                        this.mechanics.set(this.mechanics().filter((val) => val._id !== mechanic._id));
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Successful',
+                            detail: 'Mécanicien supprimé avec succès',
+                            life: 3000
+                        });
+                    },
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Erreur lors de la suppression du mécanicien'
+                        });
+                    }
                 });
+                this.mechanic = {};
             }
         });
     }
@@ -144,7 +165,7 @@ export class MechanicCrudComponent implements OnInit {
     findIndexById(id: string): number {
         let index = -1;
         for (let i = 0; i < this.mechanics().length; i++) {
-            if (this.mechanics()[i].id === id) {
+            if (this.mechanics()[i]._id === id) {
                 index = i;
                 break;
             }
@@ -157,14 +178,25 @@ export class MechanicCrudComponent implements OnInit {
         this.submitted = true;
         let _mechanics = this.mechanics();
         if (this.mechanic.name?.trim()) {
-            if (this.mechanic.id) {
-                _mechanics[this.findIndexById(this.mechanic.id)] = this.mechanic;
+            if (this.mechanic._id) {
+                _mechanics[this.findIndexById(this.mechanic._id)] = this.mechanic;
                 this.mechanics.set([..._mechanics]);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Product Updated',
-                    life: 3000
+                this.mechanicService.updateMechanic(this.mechanic).subscribe({
+                    next: (response) => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Successful',
+                            detail: 'Mécanicien modifié',
+                            life: 3000
+                        });
+                    },
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Erreur lors de la modification du mécanicien'
+                        });
+                    }
                 });
             } else {
                 // this.mechanic.id = this.createId();
@@ -177,9 +209,15 @@ export class MechanicCrudComponent implements OnInit {
                             life: 3000
                         });
                     },
-                    error: (error) => {}
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: 'Erreur lors de la création du mécanicien'
+                        });
+                    }
                 });
-                // this.mechanics.set([..._mechanics, this.mechanic]);
+                this.mechanics.set([..._mechanics, this.mechanic]);
             }
 
             this.mechanicDialog = false;

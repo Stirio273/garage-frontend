@@ -1,7 +1,7 @@
 import { ProfilType } from './profil-type.type';
 
 export interface Mechanic {
-    id?: string;
+    _id?: string;
     code?: string;
     name?: string;
     firstName?: string;
