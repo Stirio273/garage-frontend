@@ -23,6 +23,18 @@ export class ServiceService {
         );
     }
 
+    getServicesForTask(): Observable<any> {
+        return this.http.get(`${environment.apiUrl}/mecanicien/services`).pipe(
+            tap((response) => {
+                console.log(response);
+            }),
+            catchError((error) => {
+                console.error('Erreur lors de la récupération des services : ', error);
+                return throwError(() => new Error('Echec lors de la récuperation des services. Veuillez réessayer.'));
+            })
+        );
+    }
+
     addService(service: Service): Observable<any> {
         return this.http.post<any>(`${environment.apiUrl}/services`, service).pipe(
             tap((response) => {

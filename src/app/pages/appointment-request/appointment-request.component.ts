@@ -92,18 +92,10 @@ export class AppointmentRequestComponent implements OnInit {
 
     // Disabled dates (example)
     disabledDates: Date[] = [new Date(2024, 2, 15), new Date(2024, 2, 16), new Date(2024, 2, 20)];
-    private cdnLinkElement!: HTMLLinkElement;
 
     constructor(private messageService: MessageService) {}
 
-    ngOnInit() {
-        this.cdnLinkElement = document.createElement('link');
-        this.cdnLinkElement.rel = 'stylesheet';
-        this.cdnLinkElement.href = 'https://unpkg.com/primeflex@latest/primeflex.css'; // Example CDN link
-
-        // Append the link element to the head of the document
-        document.head.appendChild(this.cdnLinkElement);
-    }
+    ngOnInit() {}
 
     // Step navigation
     nextStep() {
@@ -181,11 +173,5 @@ export class AppointmentRequestComponent implements OnInit {
             summary: 'Success',
             detail: 'Réservation confirmée avec succès'
         });
-    }
-
-    ngOnDestroy() {
-        if (this.cdnLinkElement) {
-            document.head.removeChild(this.cdnLinkElement);
-        }
     }
 }

@@ -11,12 +11,20 @@ import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AvatarModule } from 'primeng/avatar';
+import { DropdownModule } from 'primeng/dropdown';
+import { TextareaModule } from 'primeng/textarea';
+import { CalendarModule } from 'primeng/calendar';
+import { ServiceService } from '../../service/service.service';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-task-list',
-    imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, DialogModule, MessagesModule, TableModule, CardModule, CheckboxModule, AvatarModule],
+    standalone: true,
+    imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, DialogModule, MessagesModule, TableModule, CardModule, CheckboxModule, AvatarModule, ConfirmDialogModule, DropdownModule, TextareaModule, CalendarModule],
     templateUrl: './task-list.component.html',
-    styleUrl: './task-list.component.scss'
+    styleUrl: './task-list.component.scss',
+    providers: [ConfirmationService]
 })
 export class TaskListComponent {
     isEdit: boolean = false;
@@ -26,59 +34,68 @@ export class TaskListComponent {
     completeTask!: Task;
     visible: boolean = false;
     messages: any[] = [];
+    // New task form properties
+    showNewTaskDialog: boolean = false;
+    newTask: Task = {};
+    // Service options for dropdown
+    services = [];
+    selectedService: any;
 
-    constructor(private service: TaskService) {
+    constructor(
+        private taskService: TaskService,
+        private serviceService: ServiceService,
+        private confirmationService: ConfirmationService
+    ) {
         this.tasks = [
-            {
-                id: '1',
-                name: 'Create a New Landing UI',
-                description: '',
-                startDate: new Date(),
-                dueDate: new Date('2024-05-13'),
-                completed: false,
-                commentsCount: 3,
-                attachmentsCount: 2,
-                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg', '/assets/avatars/avatar3.jpg']
-            },
-            {
-                id: '2',
-                name: 'Create Dashboard',
-                description: '',
-                startDate: new Date(),
-                dueDate: new Date('2024-05-16'),
-                completed: false,
-                commentsCount: 2,
-                attachmentsCount: 4,
-                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg']
-            },
-            {
-                id: '3',
-                name: 'Brand logo design',
-                description: '',
-                startDate: new Date(),
-                dueDate: new Date('2024-05-17'),
-                completed: false,
-                commentsCount: 4,
-                attachmentsCount: 1,
-                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg', '/assets/avatars/avatar3.jpg']
-            },
-            {
-                id: '4',
-                name: 'Create Dashboard',
-                description: '',
-                startDate: new Date(),
-                dueDate: new Date('2024-05-20'),
-                completed: false,
-                commentsCount: 1,
-                attachmentsCount: 3,
-                assignedUsers: ['/assets/avatars/avatar1.jpg', '/assets/avatars/avatar2.jpg']
-            }
+            // {
+            //     id: '1',
+            //     name: 'Create a New Landing UI',
+            //     description: '',
+            //     startDate: new Date(),
+            //     dueDate: new Date('2024-05-13'),
+            //     completed: false,
+            //     commentaires: 'Commentaire de la tâche 1',
+            //     mecanicien: { id: '1', name: 'John', firstName: 'Doe' }
+            // },
+            // {
+            //     id: '2',
+            //     name: 'Create Dashboard',
+            //     description: '',
+            //     startDate: new Date(),
+            //     dueDate: new Date('2024-05-16'),
+            //     completed: false,
+            //     commentaires: 'Commentaire de la tâche 2',
+            //     mecanicien: { id: '1', name: 'John', firstName: 'Doe' }
+            // },
+            // {
+            //     id: '3',
+            //     name: 'Brand logo design',
+            //     description: '',
+            //     startDate: new Date(),
+            //     dueDate: new Date('2024-05-17'),
+            //     completed: false,
+            //     commentaires: 'Commentaire de la tâche 3',
+            //     mecanicien: { id: '1', name: 'John', firstName: 'Doe' }
+            // },
+            // {
+            //     id: '4',
+            //     name: 'Create Dashboard',
+            //     description: '',
+            //     startDate: new Date(),
+            //     dueDate: new Date('2024-05-20'),
+            //     completed: false,
+            //     commentaires: 'Commentaire de la tâche 4',
+            //     mecanicien: { id: '1', name: 'John', firstName: 'Doe' }
+            // }
         ];
+        this.serviceService.getServicesForTask().subscribe((response) => {
+            this.services = response.data;
+        });
     }
 
     toggleTaskCompletion(task: Task) {
         // Call service to update status
-        this.service.updateTaskStatus(task.id, !task.completed).subscribe({
+        this.taskService.updateTaskStatus(task.id as string, !task.completed).subscribe({
             next: () => {
                 // If service call successful, update local state
                 task.completed = !task.completed;
@@ -99,14 +116,6 @@ export class TaskListComponent {
         });
     }
 
-    get pendingTasks() {
-        return this.tasks.filter((task) => !task.completed);
-    }
-
-    get completedTasks() {
-        return this.tasks.filter((task) => task.completed);
-    }
-
     private save() {
         // localStorage.setItem('todoItem', JSON.stringify(this.taskItemsArray));
         // localStorage.setItem('completTodoItem', JSON.stringify(this.completedTasks));
@@ -116,31 +125,9 @@ export class TaskListComponent {
         this.editItem(task);
         this.showDialog();
     }
+
     showDialog() {
         this.visible = true;
-    }
-    //alert
-    message() {
-        this.messages = [{ severity: 'error', summary: 'Error', detail: 'Kérem írjon be egy teendőt!' }];
-    }
-    addItem() {
-        // if (this.task.title === '') {
-        //     this.message();
-        //     return;
-        // }
-        // this.task.id = Date.now().toString();
-        // this.taskItemsArray.push(this.task);
-        // this.task = { id: '', title: '' };
-        // this.save();
-        // console.log(this.taskItemsArray);
-    }
-
-    deleteItem(item: Task) {
-        // const index = this.taskItemsArray.indexOf(item);
-        // if (index > -1) {
-        //     this.taskItemsArray.splice(index, 1);
-        //     this.save();
-        // }
     }
 
     editItem(task: Task) {
@@ -153,41 +140,108 @@ export class TaskListComponent {
         this.isEdit = false;
     }
 
-    saveEdit() {
-        // if (this.selectedTask.title === '') {
-        //     alert('A todo elem nem lehet üres!');
+    // New task form methods
+    openNewTaskDialog() {
+        this.showNewTaskDialog = true;
+        this.newTask = {};
+    }
+
+    submitNewTask() {
+        if (!this.selectedService) {
+            this.messages = [
+                {
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: 'Veuillez sélectionner un service'
+                }
+            ];
+            return;
+        }
+
+        // Create new task with selected service
+        const task: Task = {
+            ...this.selectedService,
+            ...this.newTask
+        };
+        console.log(task);
+
+        this.taskService.addTask(task).subscribe({
+            next: (value) => {
+                // Add task to list
+                this.tasks.push(task);
+                // Show success message
+                this.messages = [
+                    {
+                        severity: 'success',
+                        summary: 'Succès',
+                        detail: 'Tâche ajoutée avec succès'
+                    }
+                ];
+            },
+            error: (error) => {
+                this.messages = [{ severity: 'error', summary: 'Erreur', detail: error.message }];
+            }
+        });
+
+        // Close dialog and reset form
+        this.showNewTaskDialog = false;
+        this.selectedService = null;
+    }
+
+    finishAllTasks() {
+        // // Get all incomplete tasks
+        // const incompleteTasks = this.tasks.filter((task) => !task.completed);
+
+        // if (incompleteTasks.length === 0) {
+        //     this.messages = [
+        //         {
+        //             severity: 'info',
+        //             summary: 'Information',
+        //             detail: 'Toutes les tâches sont déjà terminées'
+        //         }
+        //     ];
         //     return;
         // }
-        // // Megkeressük a todoItemsArray tömbben azt az elemet,
-        // // amelyiknek az azonosítója megegyezik a selectedTodo objektum azonosítójával
-        // const index = this.taskItemsArray.findIndex((item) => item.id === this.selectedTask.id);
-        // // Ha találunk ilyen elemet, akkor módosítjuk a title és az id értékét
-        // //a selectedTodo objektum title és id értékével
-        // if (index > -1) {
-        //     this.taskItemsArray[index].title = this.selectedTask.title;
-        //     this.taskItemsArray[index].id = this.selectedTask.id;
-        //     this.save();
-        //     console.log(this.taskItemsArray);
-        // }
-        // this.isEdit = false;
-    }
 
-    complete(task: Task) {
-        // const index = this.taskItemsArray.findIndex((item) => item.id === task.id);
-        // if (index > -1) {
-        //     this.completeTask = { ...task };
-        //     this.completedTasks.push(this.completeTask);
-        //     this.taskItemsArray.splice(index, 1);
-        //     this.save();
-        //     console.log(this.completedTasks);
-        // }
-    }
-
-    completDelete(item: Task) {
-        const index = this.completedTasks.indexOf(item);
-        if (index > -1) {
-            this.completedTasks.splice(index, 1);
-            this.save();
-        }
+        // Show confirmation dialog
+        this.confirmationService.confirm({
+            message: 'Êtes-vous sur de vouloir terminer toutes les services pour le client actuel ?',
+            header: 'Confirmation',
+            icon: 'pi pi-check-circle',
+            accept: () => {
+                this.taskService.endAllTasks().subscribe({
+                    next: (value) => {
+                        this.messages = [{ severity: 'success', summary: 'Succès', detail: 'Toutes les tâches ont été terminées' }];
+                    },
+                    error: () => {
+                        this.messages = [{ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la mise à jour des tâches' }];
+                    }
+                });
+            }
+        });
+        // // Update each task's status
+        // incompleteTasks.forEach((task) => {
+        //     this.taskService.updateTaskStatus(task.id as string, true).subscribe({
+        //         next: () => {
+        //             task.completed = true;
+        //             this.messages = [
+        //                 {
+        //                     severity: 'success',
+        //                     summary: 'Succès',
+        //                     detail: 'Toutes les tâches ont été terminées'
+        //                 }
+        //             ];
+        //         },
+        //         error: () => {
+        //             this.messages = [
+        //                 {
+        //                     severity: 'error',
+        //                     summary: 'Erreur',
+        //                     detail: 'Une erreur est survenue lors de la mise à jour des tâches'
+        //                 }
+        //             ];
+        //         }
+        //     });
+        // });
     }
 }

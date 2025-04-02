@@ -353,7 +353,7 @@ export class CarListComponent implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.cars.set(this.cars().filter((val) => val.id !== car.id));
+                this.cars.set(this.cars().filter((val) => val._id !== car._id));
                 // this.car = {};
                 this.messageService.add({
                     severity: 'success',
@@ -368,7 +368,7 @@ export class CarListComponent implements OnInit {
     findIndexById(id: string): number {
         let index = -1;
         for (let i = 0; i < this.cars().length; i++) {
-            if (this.cars()[i].id === id) {
+            if (this.cars()[i]._id === id) {
                 index = i;
                 break;
             }

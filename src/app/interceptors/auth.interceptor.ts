@@ -41,6 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
                         }),
                         catchError((refreshError) => {
                             this.authService.logout();
+                            this.router.navigate(['/auth/login']);
                             return throwError(() => refreshError);
                         })
                     );

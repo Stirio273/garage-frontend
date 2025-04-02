@@ -1,3 +1,5 @@
+@import 'primeflex/primeflex.css';
+
 .chat-container {
     height: 100vh;
     display: flex;
@@ -9,7 +11,7 @@
     border-right: 1px solid var(--surface-border);
     display: flex;
     flex-direction: column;
-    
+
     .user-list {
         flex: 1;
         overflow-y: auto;
@@ -27,7 +29,7 @@
     :host ::ng-deep {
         .p-inputicon {
             width: 100%;
-            
+
             i {
                 left: 1rem;
                 color: var(--text-color-secondary);
@@ -38,7 +40,7 @@
                 padding-left: 2.5rem;
                 border-radius: 2rem;
                 background-color: var(--surface-ground);
-                
+
                 &:enabled:focus {
                     box-shadow: 0 0 0 1px var(--primary-color);
                 }
@@ -55,7 +57,7 @@
 
 .chat-header {
     background-color: var(--surface-card);
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chat-messages {
@@ -77,7 +79,7 @@
         background-color: var(--primary-color);
         color: var(--primary-color-text);
         border-top-right-radius: 0;
-        
+
         .message-meta {
             color: var(--primary-100);
         }
@@ -122,7 +124,7 @@
     .p-scrollpanel {
         .p-scrollpanel-wrapper {
             border-radius: 0;
-            
+
             .p-scrollpanel-bar {
                 background-color: var(--surface-border);
                 opacity: 0.3;

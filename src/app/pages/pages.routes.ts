@@ -7,9 +7,10 @@ import { ServiceCrudComponent } from './services/service-crud.component';
 import { ReservationListComponent } from './reservation-list/reservation-list.component';
 import { TaskListComponent } from './task-list/task-list.component';
 import { ChatComponent } from './chat/chat.component';
-import { DemandeDevisComponent } from './demande-devis/demande-devis.component';
+import { DemandeServiceComponent } from './demande-service/demande-service.component';
 import { DetailsDevisComponent } from './details-devis/details-devis.component';
 import { AppointmentRequestComponent } from './appointment-request/appointment-request.component';
+import { ReceptionClientComponent } from './reception-client/reception-client.component';
 
 export default [
     { path: 'empty', component: Empty },
@@ -19,8 +20,9 @@ export default [
     { path: 'reservations', component: ReservationListComponent, canActivate: [AuthGuard], data: { role: 'manager' } },
     { path: 'my-tasks', component: TaskListComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
     { path: 'messaging', component: ChatComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
-    { path: 'demande-devis', component: DemandeDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
+    { path: 'demande-service', component: DemandeServiceComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: 'details-devis', component: DetailsDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: 'rendez-vous', component: AppointmentRequestComponent, canActivate: [AuthGuard], data: { role: 'client' } },
+    { path: 'reception-client', component: ReceptionClientComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

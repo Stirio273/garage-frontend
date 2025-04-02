@@ -81,7 +81,7 @@ export class ServiceCrudComponent implements OnInit {
     }
 
     openNew() {
-        this.service = { cout: 0, dureeEstimee: 0 };
+        this.service = { cout: 0, estimationDuree: 0 };
         this.submitted = false;
         this.serviceDialog = true;
     }
@@ -124,7 +124,7 @@ export class ServiceCrudComponent implements OnInit {
                 this.serviceService.deleteService(service._id as string).subscribe({
                     next: (response) => {
                         this.services.set(this.services().filter((val) => val._id !== service._id));
-                        this.service = { cout: 0, dureeEstimee: 0 };
+                        this.service = { cout: 0, estimationDuree: 0 };
                         this.messageService.add({
                             severity: 'success',
                             summary: 'Successful',
@@ -202,7 +202,7 @@ export class ServiceCrudComponent implements OnInit {
             }
 
             this.serviceDialog = false;
-            this.service = { cout: 0, dureeEstimee: 0 };
+            this.service = { cout: 0, estimationDuree: 0 };
         }
     }
 }

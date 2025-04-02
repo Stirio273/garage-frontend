@@ -5,6 +5,7 @@ export interface Service {
     description?: string;
     commentaires?: string;
     cout?: number;
-    dureeEstimee?: number;
+    estimationDuree?: number;
     typeservice?: CategorieType;
+    selected?: boolean;
 }

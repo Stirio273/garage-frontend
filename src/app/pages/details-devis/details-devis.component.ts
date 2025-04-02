@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
+import { Router, NavigationEnd } from '@angular/router';
+import { Car } from '../../model/car';
 
 interface QuoteService {
     designation: string;
@@ -18,79 +20,42 @@ interface QuoteService {
     templateUrl: './details-devis.component.html',
     styleUrl: './details-devis.component.scss'
 })
-export class DetailsDevisComponent {
+export class DetailsDevisComponent implements OnInit {
     quoteNumber: string = '003/2018';
-    customerInfo: string = 'RMA WATANIYA- ASSURANCE Isayoure';
-    services: QuoteService[] = [
-        {
-            designation: 'C.ext Moteur',
-            quantity: 1,
-            unitPrice: 1200.0,
-            amount: 1200.0
-        },
-        {
-            designation: 'C.ext droite',
-            quantity: 1,
-            unitPrice: 500.0,
-            amount: 500.0
-        },
-        {
-            designation: 'pare choc avant',
-            quantity: 1,
-            unitPrice: 1800.0,
-            amount: 1800.0
-        },
-        {
-            designation: 'Support côté droite',
-            quantity: 1,
-            unitPrice: 100.0,
-            amount: 100.0
-        },
-        {
-            designation: 'Parabole côté droite',
-            quantity: 1,
-            unitPrice: 600.0,
-            amount: 600.0
-        },
-        {
-            designation: 'Garniture Avant Du capot',
-            quantity: 1,
-            unitPrice: 600.0,
-            amount: 600.0
-        },
-        {
-            designation: 'Baguette sous Parabole',
-            quantity: 1,
-            unitPrice: 100.0,
-            amount: 100.0
-        },
-        {
-            designation: "Réservoir d'eau lave glace",
-            quantity: 1,
-            unitPrice: 200.0,
-            amount: 200.0
-        },
-        {
-            designation: 'Traverse Avant',
-            quantity: 1,
-            unitPrice: 500.0,
-            amount: 500.0
+    customerInfo: string = '';
+    services: QuoteService[] = [];
+    selectedCar: Car | null = null;
+    notes: string = '';
+
+    constructor(private router: Router) {
+        // Get the navigation state
+        const navigation = this.router.getCurrentNavigation();
+        if (navigation?.extras.state) {
+            const state = navigation.extras.state as any;
+            this.services = state.services || [];
+            this.selectedCar = state.car || null;
+            this.notes = state.notes || '';
+
+            // Set customer info from car details
+            if (this.selectedCar) {
+                this.customerInfo = `${this.selectedCar.marque} ${this.selectedCar.modele} - ${this.selectedCar.plaqueImmatriculation}`;
+            }
         }
-        // },
-        // {
-        //     designation: "Main d'oeuvre",
-        //     quantity: 1,
-        //     unitPrice: 1500.0,
-        //     amount: 1500.0
-        // }
-    ];
+    }
+
+    ngOnInit() {
+        // If no data was passed, redirect back to the form
+        if (this.services.length === 0) {
+            this.router.navigate(['/pages/demande-devis']);
+        }
+    }
 
     getTotalHT(): number {
         return this.services.reduce((total, service) => total + service.amount, 0);
     }
 
     getTVA(): number {
-        return 0; // In this case TVA is 0 as shown in the image
+        return 0.2;
     }
 
     getTotalTTC(): number {

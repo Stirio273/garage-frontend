@@ -1,29 +1,32 @@
+<p-messages [(value)]="messages" [enableService]="false" [closable]="true"></p-messages>
 <div class="task-list-container">
-    <p-messages [(value)]="messages" [enableService]="false" [closable]="true"></p-messages>
 
     <div class="header flex justify-content-between align-items-center mb-4">
         <h1>Liste des tâches</h1>
-        <!-- <button pButton label="+ Create Task" class="p-button-primary"></button> -->
+        <div class="flex gap-2">
+            <button pButton label="Terminer toutes les services" icon="pi pi-check" class="p-button-success"
+                (click)="finishAllTasks()"></button>
+            <button pButton label="+ Ajouter une tâche" class="p-button-primary" (click)="openNewTaskDialog()"></button>
+        </div>
     </div>
 
     <div class="todo-section mb-4">
-        <h2 class="section-title mb-3">A faire</h2>
         <div class="task-items">
-            <div *ngFor="let task of pendingTasks" class="task-item p-3 mb-2 surface-card border-round-lg">
+            <div *ngFor="let task of tasks" class="task-item p-3 mb-2 surface-card border-round-lg">
                 <div class="flex align-items-center justify-content-between">
                     <div class="flex align-items-center gap-3">
                         <p-checkbox [ngModel]="task.completed" (onChange)="toggleTaskCompletion(task)"></p-checkbox>
-                        <span class="task-name">{{task.name}}</span>
+                        <span class="task-name">{{task.description}}</span>
                     </div>
                     <div class="flex align-items-center gap-3">
                         <span class="task-meta flex align-items-center gap-2">
-                            <i class="pi pi-comments"></i> {{task.commentsCount}}
-                            <i class="pi pi-paperclip"></i> {{task.attachmentsCount}}
+                            <i class="pi pi-comments"></i> {{task.commentaires}}
+                            <i class="pi pi-paperclip"></i> 1
                             <i class="pi pi-calendar"></i> {{task.dueDate | date:'dd MMM'}}
                         </span>
                         <div class="assigned-users">
-                            <p-avatar *ngFor="let user of task.assignedUsers" [image]="user" size="normal"
-                                shape="circle" class="ml-2"></p-avatar>
+                            <p-avatar [image]="task.mecanicien?.name" size="normal" shape="circle" shape="circle"
+                                class="ml-2"></p-avatar>
                         </div>
                         <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"></button>
                     </div>
@@ -32,7 +35,7 @@
         </div>
     </div>
 
-    <div class="completed-section">
+    <!-- <div class="completed-section">
         <h2 class="section-title mb-3">Complétées</h2>
         <div class="task-items">
             <div *ngFor="let task of completedTasks" class="task-item p-3 mb-2 surface-card border-round-lg">
@@ -43,18 +46,60 @@
                     </div>
                     <div class="flex align-items-center gap-3">
                         <span class="task-meta flex align-items-center gap-2 text-500">
-                            <i class="pi pi-comments"></i> {{task.commentsCount}}
-                            <i class="pi pi-paperclip"></i> {{task.attachmentsCount}}
+                            <i class="pi pi-comments"></i> {{task.commentaires}}
+                            <i class="pi pi-paperclip"></i> 1
                             <i class="pi pi-calendar"></i> {{task.dueDate | date:'dd MMM'}}
                         </span>
                         <div class="assigned-users">
-                            <p-avatar *ngFor="let user of task.assignedUsers" [image]="user" size="normal"
-                                shape="circle" class="ml-2"></p-avatar>
+                            <p-avatar [image]="task.mecanicien?.name" size="normal" shape="circle"
+                                class="ml-2"></p-avatar>
                         </div>
                         <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"></button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+
+    <!-- New Task Dialog -->
+    <p-dialog [(visible)]="showNewTaskDialog" [style]="{ width: '450px'}" header="Nouvelle tâche" [modal]="true"
+        [draggable]="false" [resizable]="false">
+        <div class="flex flex-column gap-4">
+            <!-- Service Selection -->
+            <div class="flex flex-column gap-2">
+                <label for="service" class="block text-900 font-medium">Service</label>
+                <p-dropdown id="service" [options]="services" [(ngModel)]="selectedService" optionLabel="description"
+                    placeholder="Sélectionner un service" class="w-full">
+                    <ng-template pTemplate="item" let-service>
+                        <div class="flex align-items-center">
+                            <i class="pi pi-cog mr-2"></i>
+                            <div>{{service.description}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem" let-service>
+                        <div class="flex align-items-center">
+                            <i class="pi pi-cog mr-2"></i>
+                            <div>{{service.description}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            <!-- Description -->
+            <div class="flex flex-column gap-2">
+                <label for="description" class="block text-900 font-medium">Commentaires</label>
+                <textarea id="description" pInputTextarea [(ngModel)]="newTask.commentaires" [rows]="3"
+                    placeholder="Décrivez la tâche..." class="w-full"></textarea>
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <button pButton label="Annuler" icon="pi pi-times" class="p-button-text"
+                (click)="showNewTaskDialog = false"></button>
+            <button pButton label="Créer" icon="pi pi-check" class="p-button-primary"
+                (click)="submitNewTask()"></button>
+        </ng-template>
+    </p-dialog>
 </div>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

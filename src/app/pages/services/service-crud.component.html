@@ -38,10 +38,10 @@
                 Prix
                 <p-sortIcon field="cout" />
             </th>
-            <!-- <th pSortableColumn="dureeEstimee" style="min-width: 12rem">
+            <th pSortableColumn="dureeEstimee" style="min-width: 12rem">
                 Durée estimée
                 <p-sortIcon field="dureeEstimee" />
-            </th> -->
+            </th>
             <th style="min-width: 12rem"></th>
         </tr>
     </ng-template>
@@ -54,7 +54,7 @@
             <td style="min-width: 16rem">{{ service.commentaires }}</td>
             <td style="min-width: 16rem">{{ service.typeservice }}</td>
             <td style="text-align: right;">{{ service.cout | number:'1.0' }}</td>
-            <!-- <td>{{ service.dureeEstimee }}</td> -->
+            <td>{{ service.estimationDuree || 0 }} min</td>
             <td>
                 <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                     (click)="onEditService(service)" />
@@ -96,12 +96,12 @@
                 <small class="text-red-500" *ngIf="submitted && !service.cout">Le prix du service est
                     obligatoire.</small>
             </div>
-            <!-- <div>
+            <div>
                 <label for="dureeEstimee" class="block font-bold mb-3">Durée estimée</label>
-                <p-inputnumber id="dureeEstimee" [(ngModel)]="service.dureeEstimee" required autofocus fluid />
-                <small class="text-red-500" *ngIf="submitted && !service.dureeEstimee">Le numéro de téléphone est
+                <p-inputnumber id="dureeEstimee" [(ngModel)]="service.estimationDuree" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !service.estimationDuree">Une durée estimée est
                     obligatoire.</small>
-            </div> -->
+            </div>
         </div>
     </ng-template>
 

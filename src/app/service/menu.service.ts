@@ -44,7 +44,7 @@ export class MenuService {
                 label: 'Clients',
                 items: [
                     { label: 'Messages clients', icon: 'pi pi-fw pi-envelope', routerLink: ['/pages/messaging'] },
-                    { label: 'Réception des clients', icon: 'pi pi-fw pi-user', routerLink: ['/pages/reception'] }
+                    { label: 'Réception des clients', icon: 'pi pi-fw pi-user', routerLink: ['/pages/reception-client'] }
                 ]
             }
         ],
@@ -58,10 +58,7 @@ export class MenuService {
             },
             {
                 label: 'Services et devis',
-                items: [
-                    { label: 'Liste des services', icon: 'pi pi-fw pi-cog', routerLink: ['/pages/services'] },
-                    { label: 'Demande de devis', icon: 'pi pi-fw pi-pencil', routerLink: ['/pages/demande-devis'] }
-                ]
+                items: [{ label: 'Demande de services', icon: 'pi pi-fw pi-pencil', routerLink: ['/pages/demande-service'] }]
             },
             {
                 label: 'Réservations',

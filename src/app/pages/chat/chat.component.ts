@@ -89,16 +89,8 @@ export class ChatComponent implements OnInit {
     searchQuery: string = '';
     currentUser: string = 'Asiya Javayant';
     currentUserAvatar: string = 'assets/avatars/avatar-f.jpg';
-    private cdnLinkElement!: HTMLLinkElement;
 
-    ngOnInit(): void {
-        this.cdnLinkElement = document.createElement('link');
-        this.cdnLinkElement.rel = 'stylesheet';
-        this.cdnLinkElement.href = 'https://unpkg.com/primeflex@latest/primeflex.css';
-
-        // Append the link element to the head of the document
-        document.head.appendChild(this.cdnLinkElement);
-    }
+    ngOnInit(): void {}
 
     selectUser(user: User) {
         this.selectedUser = user;
@@ -121,12 +113,5 @@ export class ChatComponent implements OnInit {
 
     getFilteredUsers() {
         return this.users.filter((user) => user.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
-    }
-
-    ngOnDestroy(): void {
-        // Remove the link element when the component is destroyed
-        if (this.cdnLinkElement) {
-            document.head.removeChild(this.cdnLinkElement);
-        }
     }
 }

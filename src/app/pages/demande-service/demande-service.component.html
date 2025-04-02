@@ -6,9 +6,9 @@
             <p-card class="shadow-2">
                 <div class="flex align-items-center justify-content-between mb-4">
                     <div>
-                        <h1 class="text-2xl font-bold m-0">Demander un devis</h1>
+                        <h1 class="text-2xl font-bold m-0">Demander des services</h1>
                         <p class="text-500 mt-2">Sélectionnez les services pour votre véhicule et soumettez une demande
-                            de devis</p>
+                            de services</p>
                     </div>
                     <div class="text-right">
                         <h2 class="text-xl font-bold m-0 text-primary">Total: {{getTotalPrice() | number:'1.0-0'}} MGA
@@ -52,9 +52,9 @@
                             <tr>
                                 <th style="width: 4rem"></th>
                                 <th>Service</th>
-                                <th>Description</th>
-                                <th>Durée</th>
-                                <th>Prix</th>
+                                <!-- <th>Description</th> -->
+                                <!-- <th>Durée</th> -->
+                                <th class="text-center">Prix</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-service>
@@ -64,16 +64,17 @@
                                         (onClick)="onServiceSelect(service)"></p-checkbox>
                                 </td>
                                 <td>
-                                    <div class="font-medium">{{service.name}}</div>
+                                    <div class="font-medium">{{service.description}}</div>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <div class="text-500">{{service.description}}</div>
-                                </td>
-                                <td>
+                                </td> -->
+                                <!-- <td>
                                     <div class="text-500">{{service.duration}}</div>
-                                </td>
+                                </td> -->
                                 <td>
-                                    <div class="font-medium">{{service.price | number:'1.0-0'}} MGA</div>
+                                    <div class="font-medium text-right w-6 mx-auto">{{service.cout | number:'1.0-0'}}
+                                        MGA</div>
                                 </td>
                             </tr>
                         </ng-template>
@@ -90,7 +91,7 @@
 
                 <!-- Submit Button -->
                 <div class="flex justify-content-end">
-                    <p-button icon="pi pi-send" label="Envoyer la demande" (onClick)="onSubmit()" [loading]="false"
+                    <p-button icon="pi pi-send" label="Avoir le devis" (onClick)="onSubmit()" [loading]="false"
                         styleClass="p-button-raised"></p-button>
                 </div>
             </p-card>
