@@ -11,6 +11,9 @@ import { DemandeServiceComponent } from './demande-service/demande-service.compo
 import { DetailsDevisComponent } from './details-devis/details-devis.component';
 import { AppointmentRequestComponent } from './appointment-request/appointment-request.component';
 import { ReceptionClientComponent } from './reception-client/reception-client.component';
+import { FacturationListComponent } from './facturation-list/facturation-list.component';
+import { PaiementComponent } from './paiement/paiement.component';
+import { FactureClientListComponent } from './facture-client-list/facture-client-list.component';
 
 export default [
     { path: 'empty', component: Empty },
@@ -24,5 +27,8 @@ export default [
     { path: 'details-devis', component: DetailsDevisComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: 'rendez-vous', component: AppointmentRequestComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: 'reception-client', component: ReceptionClientComponent, canActivate: [AuthGuard], data: { role: 'mecanicien' } },
+    { path: 'facturation-client', component: FacturationListComponent, canActivate: [AuthGuard], data: { role: 'manager' } },
+    { path: 'facturation/payer/:idFacture', component: PaiementComponent, canActivate: [AuthGuard], data: { role: 'manager' } },
+    { path: 'mes-factures', component: FactureClientListComponent, canActivate: [AuthGuard], data: { role: 'client' } },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

@@ -1,0 +1,59 @@
+<div class="paiement-container">
+    <p-toast></p-toast>
+
+    <div class="grid justify-content-center">
+        <div class="col-12 md:col-4 lg:col-4">
+            <p-card header="Enregistrement de paiement" [style]="{ 'margin-top': '2rem' }">
+                <form (ngSubmit)="submitPaiement()" class="flex flex-column gap-4">
+                    <!-- Montant -->
+                    <div class="field">
+                        <label for="montant" class="block text-900 font-medium mb-2">Montant (MGA)</label>
+                        <p-inputNumber id="montant" [(ngModel)]="montant" name="montant" [showButtons]="true"
+                            buttonLayout="horizontal" spinnerMode="horizontal" decrementButtonClass="p-button-secondary"
+                            incrementButtonClass="p-button-secondary" incrementButtonIcon="pi pi-plus"
+                            decrementButtonIcon="pi pi-minus" [min]="0" [required]="true" class="w-full">
+                        </p-inputNumber>
+                    </div>
+
+                    <!-- Date de paiement -->
+                    <!-- <div class="field">
+                        <label for="datePaiement" class="block text-900 font-medium mb-2">Date de paiement</label>
+                        <p-calendar id="datePaiement" [(ngModel)]="datePaiement" name="datePaiement" [showIcon]="true"
+                            [showTime]="true" [required]="true" class="w-full">
+                        </p-calendar>
+                    </div> -->
+
+                    <!-- Mode de paiement -->
+                    <!-- <div class="field">
+                        <label for="modePaiement" class="block text-900 font-medium mb-2">Mode de paiement</label>
+                        <p-dropdown id="modePaiement" [(ngModel)]="modePaiement" name="modePaiement"
+                            [options]="modesPaiement" optionLabel="label" [required]="true"
+                            placeholder="Sélectionner un mode de paiement" class="w-full">
+                            <ng-template pTemplate="item" let-mode>
+                                <div class="flex align-items-center">
+                                    <i [class]="'pi pi-' + getPaymentIcon(mode.value)" class="mr-2"></i>
+                                    <div>{{mode.label}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div> -->
+
+                    <!-- Référence -->
+                    <!-- <div class="field">
+                        <label for="reference" class="block text-900 font-medium mb-2">Référence</label>
+                        <input id="reference" pInputText [(ngModel)]="reference" name="reference"
+                            placeholder="Numéro de référence (optionnel)" class="w-full">
+                    </div> -->
+
+                    <!-- Boutons d'action -->
+                    <div class="flex justify-content-end gap-2 mt-4">
+                        <button pButton type="button" label="Annuler" class="p-button-text"
+                            (click)="resetForm()"></button>
+                        <button pButton type="submit" label="Enregistrer" class="p-button-primary"
+                            icon="pi pi-check"></button>
+                    </div>
+                </form>
+            </p-card>
+        </div>
+    </div>
+</div>

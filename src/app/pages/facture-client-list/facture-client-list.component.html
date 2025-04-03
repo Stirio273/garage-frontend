@@ -1,0 +1,106 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4">Mes factures</div>
+    <p-table #dt1 [value]="factures" dataKey="id" [rows]="10" [loading]="loading" [rowHover]="true"
+        [showGridlines]="true" [paginator]="true" [globalFilterFields]="['dateHeureFacture', 'status']"
+        responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Réinitialiser" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                    (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Recherche" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-between items-center">
+                        Date
+                        <p-columnFilter type="date" field="dateHeureFacture" display="menu"
+                            placeholder="mm/dd/yyyy"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-between items-center">
+                        Total à payer
+                        <p-columnFilter type="text" field="TotalAPayer" display="menu"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-between items-center">
+                        Paiement effectué
+                        <p-columnFilter type="text" field="paiementEffectue" display="menu"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-between items-center">
+                        Reste à payer
+                        <p-columnFilter type="text" field="resteAPayer" display="menu"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Status
+                        <p-columnFilter field="status" matchMode="equals" display="menu">
+                            <ng-template #filter let-value let-filter="filterCallback">
+                                <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                    placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                    <ng-template let-option #item>
+                                        <span [class]="'customer-badge status-' + option.value">{{ option.label
+                                            }}</span>
+                                    </ng-template>
+                                </p-select>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-facture>
+            <tr>
+                <td>
+                    {{ facture.dateHeureFacture | date: 'MM/dd/yyyy' }}
+                </td>
+                <!-- <td>
+                    <div class="flex items-center gap-2">
+                        <img [alt]="customer.representative.name"
+                            src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ customer.representative.image }}"
+                            width="32" style="vertical-align: middle" />
+                        <span class="image-text">{{ customer.representative.name }}</span>
+                    </div>
+                </td> -->
+                <td>
+                    {{ facture.TotalAPayer | number: '1.0-0' }} Ar
+                </td>
+                <td>
+                    {{ facture.paiementEffectue | number: '1.0-0' }} Ar
+                </td>
+                <td>
+                    {{ facture.resteAPayer | number: '1.0-0' }} Ar
+                </td>
+                <td>
+                    <p-tag [value]="facture.status" [severity]="getSeverity(facture.status)"
+                        styleClass="dark:!bg-surface-900" />
+                </td>
+                <!-- <td class="text-center">
+                    <p-tag [value]="customer.status.toLowerCase()"
+                        [severity]="getSeverity(customer.status.toLowerCase())" styleClass="dark:!bg-surface-900" />
+                </td> -->
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">Aucune facture trouvée.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Récuperations des factures. Veuillez patientez.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

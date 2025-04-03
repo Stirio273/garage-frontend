@@ -17,7 +17,11 @@ export class TaskService {
 
     addTask(task: Task): Observable<any> {
         return this.http
-            .post<any>(`${environment.apiUrl}/mecanicien/consommation-service`, { ...task, mecanicien: { id: this.authService.currentUser()?._id, name: this.authService.currentUser()?.name, firstName: this.authService.currentUser()?.firstName } })
+            .post<any>(`${environment.apiUrl}/mecanicien/consommation-service`, {
+                ...task,
+                mecanicien: { id: this.authService.currentUser()?._id, name: this.authService.currentUser()?.name, firstName: this.authService.currentUser()?.firstName },
+                quantite: 1
+            })
             .pipe(
                 tap((response) => {
                     console.log('Ajout de la tâche réussie');
