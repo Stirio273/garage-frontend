@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
+import { DashboardService } from '../../../service/dashboard.service';
 
 @Component({
     standalone: true,
@@ -16,19 +17,19 @@ import { MenuModule } from 'primeng/menu';
             </div>
         </div>
         <ul class="list-none p-0 m-0">
-            <li class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+            <li class="flex flex-col md:flex-row md:items-center md:justify-between mb-6" *ngFor="let service of top5Services; let i = index">
                 <div>
-                    <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">Vidange moteur</span>
-                    <div class="mt-1 text-muted-color">Entretien</div>
+                    <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">{{ service._id }}</span>
+                    <div class="mt-1 text-muted-color">{{ service.count }} demandes</div>
                 </div>
                 <div class="mt-2 md:mt-0 flex items-center">
                     <div class="bg-surface-300 dark:bg-surface-500 rounded-border overflow-hidden w-40 lg:w-24" style="height: 8px">
-                        <div class="bg-orange-500 h-full" style="width: 75%"></div>
+                        <div class="h-full" [ngClass]="getProgressBarColor(i)" style="width: {{ service.percentage | number: '1.0-2' }}%"></div>
                     </div>
-                    <span class="text-purple-500 ml-4 font-medium">%75</span>
+                    <span class="ml-4 font-medium" [ngClass]="getTextColor(i)">{{ service.percentage | number: '1.0-2' }}%</span>
                 </div>
             </li>
-            <li class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+            <!-- <li class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
                     <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">Remplacement batterie</span>
                     <div class="mt-1 text-muted-color">Réparation</div>
@@ -75,11 +76,36 @@ import { MenuModule } from 'primeng/menu';
                     </div>
                     <span class="text-purple-500 ml-4 font-medium">%16</span>
                 </div>
-            </li>
+            </li> -->
         </ul>
     </div>`
 })
-export class BestSellingWidget {
+export class BestSellingWidget implements OnInit {
+    top5Services: { _id: string; count: number; percentage: number }[] = [];
+    private colors = [
+        { progress: 'bg-orange-500', text: 'text-orange-500' },
+        { progress: 'bg-cyan-500', text: 'text-cyan-500' },
+        { progress: 'bg-pink-500', text: 'text-pink-500' },
+        { progress: 'bg-green-500', text: 'text-green-500' },
+        { progress: 'bg-purple-500', text: 'text-purple-500' }
+    ];
+
+    constructor(private dashboardService: DashboardService) {}
+
+    ngOnInit(): void {
+        this.dashboardService.getTop5Services().subscribe((response) => {
+            this.top5Services = response.data.topServices;
+        });
+    }
+
+    getProgressBarColor(index: number): string {
+        return this.colors[index % this.colors.length].progress;
+    }
+
+    getTextColor(index: number): string {
+        return this.colors[index % this.colors.length].text;
+    }
+
     menu = null;
 
     items = [

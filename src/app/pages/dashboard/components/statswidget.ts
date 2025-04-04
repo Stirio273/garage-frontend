@@ -47,6 +47,7 @@ export class StatsWidget implements OnInit {
     weekRevenue: number = 0;
     lastWeekRevenue: number = 0;
     customerNumber: { totalClients: number; clientsThisWeek: number } = { totalClients: 0, clientsThisWeek: 0 };
+
     constructor(private dashboardService: DashboardService) {}
 
     ngOnInit() {

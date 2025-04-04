@@ -7,6 +7,18 @@ import { environment } from '../../environments/environment';
 export class DashboardService {
     constructor(private http: HttpClient) {}
 
+    getTop5Services(): Observable<any> {
+        return this.http.get(`${environment.apiUrl}/top-services`).pipe(
+            tap((response) => {
+                console.log(response);
+            }),
+            catchError((err) => {
+                console.error(err);
+                return throwError(() => new Error('Une erreur est survenue. Veuillez réessayer'));
+            })
+        );
+    }
+
     getThisWeekRevenue(): Observable<any> {
         return this.http.get(`${environment.apiUrl}/chiffre-affaire-semaine`).pipe(
             tap((response) => {

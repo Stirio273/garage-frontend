@@ -41,8 +41,8 @@ export class FinancialPerformanceWidget {
     filterData() {
         const documentStyle = getComputedStyle(document.documentElement);
         let data: number[] = [];
-        this.dashboardService.getRevenues(this.anneeSelectionnee).subscribe((value) => {
-            data = value;
+        this.dashboardService.getRevenues(this.anneeSelectionnee).subscribe((response) => {
+            data = response.data;
         });
         this.barData = {
             labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -58,9 +58,9 @@ export class FinancialPerformanceWidget {
     }
 
     initChart() {
-        let data = [];
-        this.dashboardService.getRevenues(this.anneeSelectionnee).subscribe((value) => {
-            data = value;
+        let data: number[] = [];
+        this.dashboardService.getRevenues(this.anneeSelectionnee).subscribe((response) => {
+            data = response.data;
         });
 
         const documentStyle = getComputedStyle(document.documentElement);
@@ -77,7 +77,7 @@ export class FinancialPerformanceWidget {
                     label: "Chiffre d'affaires",
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
                     borderColor: documentStyle.getPropertyValue('--p-primary-500'),
-                    data: [650000, 590000, 800000, 810000, 560000, 550000, 400000, 1000000, 1250000, 1100000, 1500000, 1300000]
+                    data: data
                 }
             ]
         };
