@@ -20,7 +20,7 @@ import { DashboardService } from '../../../service/dashboard.service';
 })
 export class FinancialPerformanceWidget {
     anneeSelectionnee: number = new Date().getFullYear();
-    anneesDisponibles = [2022, 2023, 2024];
+    anneesDisponibles = Array.from({ length: 2025 - new Date().getFullYear() + 1 }, (_, i) => 2025 - i);
     barData: any;
     barOptions: any;
     subscription!: Subscription;

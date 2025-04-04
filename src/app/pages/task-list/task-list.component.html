@@ -63,7 +63,7 @@
 
     <!-- New Task Dialog -->
     <p-dialog [(visible)]="showNewTaskDialog" [style]="{ width: '450px'}" header="Nouvelle tâche" [modal]="true"
-        [draggable]="false" [resizable]="false">
+        [draggable]="false" [resizable]="false" [contentStyle]="{ overflow: 'visible' }">
         <div class="flex flex-column gap-4">
             <!-- Service Selection -->
             <div class="flex flex-column gap-2">
