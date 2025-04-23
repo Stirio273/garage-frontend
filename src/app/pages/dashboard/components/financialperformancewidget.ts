@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
-import { debounceTime, max, Subscription } from 'rxjs';
+import { debounceTime, map, max, Observable, Subscription } from 'rxjs';
 import { LayoutService } from '../../../service/layout.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
@@ -38,31 +38,44 @@ export class FinancialPerformanceWidget {
         this.initChart();
     }
 
+    transformDataToSuitChartConfiguration(data: any[]): number[] {
+        const transformedData: number[] = [];
+        let monthIndex = 0;
+
+        for (let month = 1; month <= 12; month++) {
+            if (monthIndex < data.length && data[monthIndex].month === month) {
+                transformedData.push(data[monthIndex].totalAPayer);
+                monthIndex++;
+            } else {
+                transformedData.push(0);
+            }
+        }
+
+        return transformedData;
+    }
+
+    loadRevenues(): Observable<any[]> {
+        return this.dashboardService.getRevenues(this.anneeSelectionnee).pipe(map((response) => this.transformDataToSuitChartConfiguration(response.data)));
+    }
+
     filterData() {
         const documentStyle = getComputedStyle(document.documentElement);
-        let data: number[] = [];
-        this.dashboardService.getRevenues(this.anneeSelectionnee).subscribe((response) => {
-            data = response.data;
+        this.loadRevenues().subscribe((data: any[]) => {
+            this.barData = {
+                labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                datasets: [
+                    {
+                        label: `Chiffre d'affaires ${this.anneeSelectionnee}`,
+                        backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
+                        borderColor: documentStyle.getPropertyValue('--p-primary-500'),
+                        data: data
+                    }
+                ]
+            };
         });
-        this.barData = {
-            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-            datasets: [
-                {
-                    label: `Chiffre d'affaires ${this.anneeSelectionnee}`,
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
-                    borderColor: documentStyle.getPropertyValue('--p-primary-500'),
-                    data: data
-                }
-            ]
-        };
     }
 
     initChart() {
-        let data: number[] = [];
-        this.dashboardService.getRevenues(this.anneeSelectionnee).subscribe((response) => {
-            data = response.data;
-        });
-
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const borderColor = documentStyle.getPropertyValue('--surface-border');
@@ -70,17 +83,19 @@ export class FinancialPerformanceWidget {
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
-        this.barData = {
-            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-            datasets: [
-                {
-                    label: "Chiffre d'affaires",
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
-                    borderColor: documentStyle.getPropertyValue('--p-primary-500'),
-                    data: data
-                }
-            ]
-        };
+        this.loadRevenues().subscribe((data: any[]) => {
+            this.barData = {
+                labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                datasets: [
+                    {
+                        label: `Chiffre d'affaires ${this.anneeSelectionnee}`,
+                        backgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
+                        borderColor: documentStyle.getPropertyValue('--p-primary-500'),
+                        data: data
+                    }
+                ]
+            };
+        });
 
         this.barOptions = {
             maintainAspectRatio: false,

@@ -10,7 +10,7 @@ export class DashboardService {
     getTop5Services(): Observable<any> {
         return this.http.get(`${environment.apiUrl}/top-services`).pipe(
             tap((response) => {
-                console.log(response);
+                // console.log(response);
             }),
             catchError((err) => {
                 console.error(err);
@@ -22,7 +22,7 @@ export class DashboardService {
     getThisWeekRevenue(): Observable<any> {
         return this.http.get(`${environment.apiUrl}/chiffre-affaire-semaine`).pipe(
             tap((response) => {
-                console.log(response);
+                // console.log(response);
             }),
             catchError((err) => {
                 console.error(err);
@@ -34,7 +34,7 @@ export class DashboardService {
     getCustomerNumber(): Observable<any> {
         return this.http.get(`${environment.apiUrl}/client-number`).pipe(
             tap((response) => {
-                console.log(response);
+                // console.log(response);
             }),
             catchError((err) => {
                 console.error(err);
@@ -46,7 +46,7 @@ export class DashboardService {
     getRevenues(year: number): Observable<any> {
         return this.http.get(`${environment.apiUrl}/chiffre-affaire-mensuel`, { params: { year } }).pipe(
             tap((response) => {
-                console.log(response);
+                // console.log(response);
             }),
             catchError((err) => {
                 console.error(err);
